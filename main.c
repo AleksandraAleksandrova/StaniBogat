@@ -1,7 +1,3 @@
-printf("Hello World!");
-printf("Uspeshno promenqm main.c - Aleks");
-
-// trying some random things 07.06.2021
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -22,3 +18,4 @@ struct possible_answers_t {
     struct answer_t c;
     struct answer_t d;
 }
+
