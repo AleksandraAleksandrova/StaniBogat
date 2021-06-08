@@ -8,7 +8,7 @@ printf("Uspeshno promenqm main.c - Aleks");
 struct question_t {
     // char[] name;
     int difficulty;
-    
+    struct possible_answers_t answers;
 }:
 
 struct answer_t{
