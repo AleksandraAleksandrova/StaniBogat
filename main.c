@@ -2,7 +2,7 @@
 #include <stdlib.h>
 
 struct answer_t{
-    char answer_text[];
+    char answer_text[100];
     int if_to_right;
     // if the answer is to_right if_to_right = 1 and if the answer is wrong if_to_right = 0
 };
@@ -15,7 +15,7 @@ struct possible_answers_t {
 };
 
 struct question_t {
-    char question_text[];
+    char question_text[100];
     int difficulty;
     struct possible_answers_t possible_answers;
 };
@@ -28,7 +28,7 @@ struct node_t {
 
 struct list_t {
     struct node_t* head;
-}
+};
 
 void sort_questions_list(struct node_t* list){
     /*
@@ -91,7 +91,7 @@ void sort_questions_list(struct node_t* list){
 void start_game(){
 }
 
-void add_question(){s
+void add_question(){
 }
 
 void edit_question(){
@@ -113,9 +113,9 @@ void menu(){
         scanf("%d", &response);
 
         switch(response){
-            case 1: start_game() break;
-            case 2: add_question() break;
-            case 3: edit_question() break;
+            case 1: start_game(); break;
+            case 2: add_question(); break;
+            case 3: edit_question(); break;
         }
     }
 }
