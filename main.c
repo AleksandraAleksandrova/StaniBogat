@@ -3,7 +3,6 @@
 
 struct answer_t{
     int if_right;
-    // if the answer is right if_right = 1 and if the answer is wrong if_right = 0
     char answer_text[];
 };
 
@@ -77,6 +76,14 @@ void sort_list(struct list_t* list) {
 }
 
 void start_game(){
+    //otvarq faila
+    //chete 10 vyprosa
+    //slaga gi v spisyk
+    //spisyka se podrejda
+    //vseki vypros se printira s vernite otgovori
+    //proverqva se otgovora dali e veren
+    //ako e veren vzima sledvashtiq
+    //ako e greshen se vryshta v menu()
 }
 
 void add_question(){
