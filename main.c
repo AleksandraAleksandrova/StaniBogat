@@ -28,6 +28,7 @@ struct node_t {
 struct list_t {
     struct node_t* head;
     struct node_t* tail;
+    int size;
 };
 
 void swap_nodes(struct node_t* left, struct node_t* right) {
@@ -138,6 +139,7 @@ void joker(){
         if(answer != 'y' || answer != 'Y') break;
     }
 }
+// da se slozhi goto vmesto continue
 */
 
 void start_game(){
@@ -150,24 +152,92 @@ void start_game(){
     //ako e veren vzima sledvashtiq
     //ako e greshen se vryshta v menu()
 }
-
-void add_question(struct list_t* list, FILE* file){
+ struct node_t* init_question(file){
     
     struct node_t* new_node = malloc(sizeof(struct node_t));
+
     printf("Difficulty (From 1-10): \n");
     scanf("%d", new_node->question->difficulty);
     printf("Write down your question: \n");
     fgets(new_node->question->question_text, 100, file);
+    printf("Enter answer a: \n");
+    fgets(new_node->question->possible_answers->a.answer_text, 30, file);
+    printf("Is it the right answer? \n");
+    scanf("%d", &new_node->question->possible_answers->a.if_right);
+    // za dopisvane
 
+    return new_node;
+ }
 
+void add_question(struct list_t* list, FILE* file){
     
+    struct node_t* new_node;
+    new_node = init_question(file);
+    
+
+
+
+
     sort_list(list);
 }
 
-void edit_question(){
+void print_file (struct list_t* list) {
+    
+    struct node_t* curr = list->head;
+    int counter = 1;
+
+    while(curr != NULL) {
+        printf("[%d] %s\n", counter++, curr->question->question_text);
+        curr = curr->next;
+    }
+    
 }
 
-void menu(struct list_t* list, FILE* file){
+void read_file (int argc, char** argv, struct list_t* list, int print) {
+    if (argc > 1) {
+        FILE* file = fopen(argv[1], "rb");
+
+        fseek(file, 0, SEEK_END);
+        int bite_count = ftell(file);
+        rewind(file);
+
+        int i = bite_count / sizeof(struct question_t);
+
+        fread(&list, sizeof(struct question_t), i, file);
+        
+        if (print){
+            print_file(list);
+        }
+
+        fclose(file);
+    }
+}
+
+void write_file(struct  list_t* list){
+    FILE* file = fopen("file./out.bin", "wb");
+
+    fwrite(&list, sizeof(struct question_t), 0, file);
+       
+    fclose(file);
+}
+
+void edit_question(int argc, char** argv, struct list_t* list){
+    printf("Which question to edit?\n");
+    read_file (argc, argv, list, 1);
+    puts("\n");
+    printf("Number:\n");
+    printf(">> ");
+}
+
+/*
+Редактиране на въпрос - реализирайте възможност да се избере съществуващ въпрос и да се промени която и да е информация в него. 
+Подобно на добавянето на нов, след приключване на редакцията трябва редактираният въпрос да е достъпен за избор при начало на игри или 
+при записване във файл. По желание може да разширите работата с:
+- Възможност за избор от потребителя в какъв ред и кои парчета информация иска да редактира(вместо да редактира целия въпрос)
+- Възможност за филтриране на въпросите с цел по-лесно намиране на търсения
+*/
+
+void menu(int argc, char** argv, struct list_t* list){
     printf(" *** Welcome to the game 'StaniBogat' *** ");
     puts("\n");
     int response = 1;
@@ -185,16 +255,17 @@ void menu(struct list_t* list, FILE* file){
         switch(response){
             case 0: exit(0); break;
             case 1: start_game(); break;
-            case 2: add_question(list, file); break;
-            case 3: edit_question(); break;
+            //case 2: add_question(list); break;
+            case 3: edit_question(argc, argv, list); break;
+
         }
     }
 }
 
 int main(int argc, char** argv) {
-
     struct list_t list = {NULL, NULL};
 
+<<<<<<< HEAD
     if (argc > 1) {
         FILE* file = fopen(argv[1], "rb");
 
@@ -216,5 +287,5 @@ int main(int argc, char** argv) {
     }
       //menu(list, file);
 
-    return 0;
+  return 0;
 }
