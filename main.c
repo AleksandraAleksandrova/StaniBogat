@@ -157,10 +157,6 @@ void menu(struct list_t* list, FILE* file){
     }
 }
 
-<<<<<<< HEAD
-int main(){
-    menu(list, file);
-=======
 int main(int argc, char** argv) {
 
     struct list_t list = {NULL, NULL};
@@ -184,8 +180,7 @@ int main(int argc, char** argv) {
        
         fclose(file);
   }
+    //menu(list, file);
 
-    //menu(list);
->>>>>>> 70020ca7363a4da1bc72ac72593e94cbd519d21b
     return 0;
 }
