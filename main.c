@@ -15,12 +15,12 @@ struct possible_answers_t {
 
 struct question_t {
     int difficulty;
-    struct possible_answers_t possible_answers;
+    struct possible_answers_t* possible_answers;
     char question_text[];
 };
 
 struct node_t {
-    struct question_t question;
+    struct question_t* question;
     struct node_t* next;
     struct node_t* prev;
 };
@@ -55,7 +55,7 @@ void sort_list(struct list_t* list) {
     while(left->next != NULL) {
       struct node_t* right = left->next;
 
-      if(left->question.difficulty > right->question.difficulty) {
+      if(left->question->difficulty > right->question->difficulty) {
         not_sorted = 1;
         swap_nodes(left, right);
         if(left == list->head)
@@ -116,13 +116,18 @@ void start_game(){
     //ako e greshen se vryshta v menu()
 }
 
-void add_question(){
+void add_question(struct list_t* list){
+    
+    struct node_t* new_node = malloc(sizeof(struct node_t));
+    printf("Difficulty (From 1-10): \n");
+    scanf("%d", new_node->question->difficulty);
+
 }
 
 void edit_question(){
 }
 
-void menu(){
+void menu(struct list_t* list){
     printf(" *** Welcome to the game 'StaniBogat' *** ");
     puts("\n");
     int response = 1;
@@ -140,13 +145,13 @@ void menu(){
         switch(response){
             case 0: exit(0); break;
             case 1: start_game(); break;
-            case 2: add_question(); break;
+            case 2: add_question(list); break;
             case 3: edit_question(); break;
         }
     }
 }
 
 int main(){
-    menu();
+    menu(list);
     return 0;
 }
