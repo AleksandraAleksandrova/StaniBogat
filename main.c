@@ -113,6 +113,7 @@ void menu(){
         scanf("%d", &response);
 
         switch(response){
+            case 0: exit(0); break;
             case 1: start_game(); break;
             case 2: add_question(); break;
             case 3: edit_question(); break;
