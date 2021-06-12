@@ -142,6 +142,7 @@ void joker(){
         if(answer != 'y' || answer != 'Y') break;
     }
 }
+// da se slozhi goto vmesto continue
 */
 
 void start_game(){
@@ -154,14 +155,31 @@ void start_game(){
     //ako e veren vzima sledvashtiq
     //ako e greshen se vryshta v menu()
 }
-
-void add_question(struct list_t* list, FILE* file){
+ struct node_t* init_question(file){
     
     struct node_t* new_node = malloc(sizeof(struct node_t));
+
     printf("Difficulty (From 1-10): \n");
     scanf("%d", new_node->question->difficulty);
     printf("Write down your question: \n");
     fgets(new_node->question->question_text, 100, file);
+    printf("Enter answer a: \n");
+    fgets(new_node->question->possible_answers->a.answer_text, 30, file);
+    printf("Is it the right answer? \n");
+    scanf("%d", &new_node->question->possible_answers->a.if_right);
+    // za dopisvane
+
+    return new_node;
+ }
+
+void add_question(struct list_t* list, FILE* file){
+    
+    struct node_t* new_node;
+    new_node = init_question(file);
+    
+
+
+
 
     sort_list(list);
 }
