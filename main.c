@@ -157,7 +157,35 @@ void menu(struct list_t* list, FILE* file){
     }
 }
 
+<<<<<<< HEAD
 int main(){
     menu(list, file);
+=======
+int main(int argc, char** argv) {
+
+    struct list_t list = {NULL, NULL};
+
+    if (argc > 1) {
+        FILE* file = fopen(argv[1], "rb");
+
+        fseek(file, 0, SEEK_END);
+        int bite_count = ftell(file);
+        rewind(file);
+
+        int i = bite_count / sizeof(struct question_t);
+
+        fread(&list, sizeof(struct question_t), i, file);
+
+        fclose(file);
+    } else {  
+        FILE* file = fopen("./out.bin", "wb");
+
+        fwrite(&list, sizeof(struct question_t), 0, file);
+       
+        fclose(file);
+  }
+
+    //menu(list);
+>>>>>>> 70020ca7363a4da1bc72ac72593e94cbd519d21b
     return 0;
 }
