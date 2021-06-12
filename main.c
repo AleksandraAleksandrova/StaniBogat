@@ -74,6 +74,7 @@ void sort_list(struct list_t* list) {
   }
 
 }
+
 void joker(){
     
     /*printf("\t Choose your joker from 1 to 3\n");
