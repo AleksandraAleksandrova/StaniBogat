@@ -181,6 +181,6 @@ int main(int argc, char** argv) {
         fclose(file);
   }
     //menu(list, file);
-
+    
     return 0;
 }
