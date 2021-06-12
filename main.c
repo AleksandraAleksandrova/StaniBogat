@@ -2,9 +2,8 @@
 #include <stdlib.h>
 
 struct answer_t{
-    char answer_text[100];
-    int if_to_right;
-    // if the answer is to_right if_to_right = 1 and if the answer is wrong if_to_right = 0
+    int if_right;
+    char answer_text[];
 };
 
 struct possible_answers_t {
@@ -15,9 +14,9 @@ struct possible_answers_t {
 };
 
 struct question_t {
-    char question_text[100];
     int difficulty;
     struct possible_answers_t possible_answers;
+    char question_text[];
 };
 
 struct node_t {
@@ -28,67 +27,63 @@ struct node_t {
 
 struct list_t {
     struct node_t* head;
+    struct node_t* tail;
 };
 
-void sort_questions_list(struct node_t* list){
-    /*
-    int not_sorted = 1;
-    while(not_sorted) {
-        not_sorted = 0;
-        struct node_t* left = list->head;
+void swap_nodes(struct node_t* left, struct node_t* right) {
+    struct node_t* next = right->next;
 
-        while(left->next != NULL) {
-        */
+    if(left->prev != NULL)
+        left->prev->next = right;
 
-// first part is needed
+    right->next = left;
+    right->prev = left->prev;
+    left->next = next;
+    left->prev = right;
 
-        /*if(curr->value > curr->next->value) {
-            swap_nodes(curr, curr->next);
-            if(curr == list->head)
-            list->head = curr->prev;
-            if(curr->next == list->tail)
-            list->tail = curr;
-        } else {
-            curr = curr->next;
-        }*/
-// this part not
+    if(next != NULL)
+        next->prev = left;
+}
 
-        /*
-        struct node_t* right = left->next;
-        printf("%d %d\n", left->value, right->value);
+void sort_list(struct list_t* list) {
 
-        if(left->value > right->value) {
-            not_sorted = 1;
-            swap_nodes(left, right);
-            if(left == list->head)
-            list->head = right;
-            if(right == list->tail)
-            list->tail = left;
+  int not_sorted = 1;
+  while(not_sorted) {
+    not_sorted = 0;
+    struct node_t* left = list->head;
 
-            struct node_t* tmp = left;
-            left = right;
-            right = tmp;
-        }
+    while(left->next != NULL) {
+      struct node_t* right = left->next;
 
-        left = left->next;
-        }
+      if(left->question.difficulty > right->question.difficulty) {
+        not_sorted = 1;
+        swap_nodes(left, right);
+        if(left == list->head)
+          list->head = right;
+        if(right == list->tail)
+          list->tail = left;
 
+        struct node_t* tmp = left;
+        left = right;
+        right = tmp;
+      }   
+
+      left = left->next;
     }
-    */
 
-   // needed
+  }
 
-    /*for(int i = 0; i < arr.length - 1; i++) {
-        for(int j = i + 1; j < arr.length; j++) {
-        if(arr[i] > arr[j]) {
-            swap()
-        }
-        }
-    }*/
-    // not exactly
-    }
+}
 
 void start_game(){
+    //otvarq faila
+    //chete 10 vyprosa
+    //slaga gi v spisyk
+    //spisyka se podrejda
+    //vseki vypros se printira s vernite otgovori
+    //proverqva se otgovora dali e veren
+    //ako e veren vzima sledvashtiq
+    //ako e greshen se vryshta v menu()
 }
 
 void add_question(){
@@ -123,6 +118,5 @@ void menu(){
 
 int main(){
     menu();
-
     return 0;
 }
