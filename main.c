@@ -106,8 +106,7 @@ void joker(){
               }else{
                 printf("You already used this joker.\n");
                 printf("Enter valid joker number >> \n"); 
-                scanf("%d", &response);
-                continue;
+                scanf("%d", &response);             
               }
             }
             case 2:  {
@@ -119,7 +118,6 @@ void joker(){
                 printf("You already used this joker. \n");
                 printf("Enter valid joker number >> \n"); 
                 scanf("%d", &response);
-                continue;
               }
             }
             case 3:  {
@@ -131,7 +129,6 @@ void joker(){
                 printf("You already used this joker. \n");
                 printf("Enter valid joker number >> \n"); 
                 scanf("%d", &response);
-                continue;
               }
             }
         }
@@ -144,6 +141,7 @@ void joker(){
         if(answer != 'y' || answer != 'Y') break;
     }
 }
+// da se slozhi goto vmesto continue
 */
 
 void start_game(){
@@ -156,14 +154,31 @@ void start_game(){
     //ako e veren vzima sledvashtiq
     //ako e greshen se vryshta v menu()
 }
-
-void add_question(struct list_t* list, FILE* file){
+ struct node_t* init_question(file){
     
     struct node_t* new_node = malloc(sizeof(struct node_t));
+
     printf("Difficulty (From 1-10): \n");
     scanf("%d", new_node->question->difficulty);
     printf("Write down your question: \n");
     fgets(new_node->question->question_text, 100, file);
+    printf("Enter answer a: \n");
+    fgets(new_node->question->possible_answers->a.answer_text, 30, file);
+    printf("Is it the right answer? \n");
+    scanf("%d", &new_node->question->possible_answers->a.if_right);
+    // za dopisvane
+
+    return new_node;
+ }
+
+void add_question(struct list_t* list, FILE* file){
+    
+    struct node_t* new_node;
+    new_node = init_question(file);
+    
+
+
+
 
     sort_list(list);
 }
@@ -291,7 +306,26 @@ struct list_t fread_questions(struct list_t *list, char* out.bin)
 int main(int argc, char** argv) {
     struct list_t list = {NULL, NULL};
 
-    menu(argc, argv, &list);
+    if (argc > 1) {
+        FILE* file = fopen(argv[1], "rb");
 
-    return 0;
+        fseek(file, 0, SEEK_END);
+        int bite_count = ftell(file);
+        rewind(file);
+
+        int i = bite_count / sizeof(struct question_t);
+
+        fread(&list, sizeof(struct question_t), i, file);
+
+        fclose(file);
+    } else {  
+        FILE* file = fopen("./out.bin", "wb");
+
+        fwrite(&list, sizeof(struct question_t), 0, file);
+       
+        fclose(file);
+    }
+      //menu(list, file);
+
+  return 0;
 }
