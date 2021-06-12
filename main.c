@@ -154,18 +154,23 @@ void start_game(){
     //ako e greshen se vryshta v menu()
 }
 
-void add_question(struct list_t* list){
+void add_question(struct list_t* list, FILE* file){
     
     struct node_t* new_node = malloc(sizeof(struct node_t));
     printf("Difficulty (From 1-10): \n");
     scanf("%d", new_node->question->difficulty);
+    printf("Write down your question: \n");
+    fgets(new_node->question->question_text, 100, file);
 
+
+    
+    sort_list(list);
 }
 
 void edit_question(){
 }
 
-void menu(struct list_t* list){
+void menu(struct list_t* list, FILE* file){
     printf(" *** Welcome to the game 'StaniBogat' *** ");
     puts("\n");
     int response = 1;
@@ -183,7 +188,7 @@ void menu(struct list_t* list){
         switch(response){
             case 0: exit(0); break;
             case 1: start_game(); break;
-            case 2: add_question(list); break;
+            case 2: add_question(list, file); break;
             case 3: edit_question(); break;
         }
     }
@@ -212,7 +217,7 @@ int main(int argc, char** argv) {
        
         fclose(file);
   }
+    //menu(list, file);
 
-    //menu(list);
     return 0;
 }
