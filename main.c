@@ -75,6 +75,37 @@ void sort_list(struct list_t* list) {
 
 }
 
+void joker(){
+    
+    /*printf("\t Choose your joker from 1 to 3\n");
+    printf("50-50\n");
+    printf("Call a friend");
+    printf("Audience poll\n");
+    
+    int response = 1;
+    int count = 3;
+    while(count > 0){
+        printf(>>); 
+        scanf("%d", &response);
+    
+        switch(response){
+            case 1: \\50-50 break;
+            case 2:\\nekuf random; break;
+            case 3: \\oshte edin random; break;
+        }
+            
+        
+        printf("Do you want another joker? y/n");
+        char answer;
+        scanf("%c", &answer);
+        
+        if(answer != 'y' || answer != 'Y') break;
+        
+        count--;
+    }
+    
+*/
+}
 void start_game(){
     //otvarq faila
     //chete 10 vyprosa
