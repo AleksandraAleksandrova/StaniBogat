@@ -76,6 +76,8 @@ void sort_list(struct list_t* list) {
 
 }
 
+
+
 /*
 void joker(){
     
@@ -245,6 +247,45 @@ void menu(int argc, char** argv, struct list_t* list){
 
         }
     }
+}
+
+void fwrite_questions(struct list_t *list, char* out.bin)
+{
+    FILE* file = fopen("file./out.bin", "wb");
+
+    if(file == NULL)
+    {
+      printf("Error");
+      return;
+    }
+
+    size_t count = fwrite(&list, sizeof(struct question_t), 10, file);
+
+    if(count == 0)
+    {
+        printf("Error");
+        return;
+    }
+
+    if (print){
+            print_file(list);
+        }
+        
+    fclose(file);
+}
+
+struct list_t fread_questions(struct list_t *list, char* out.bin)
+{
+    FILE* file = fopen("file./out.bin", "rb");
+    fseek(file, 0, SEEK_END);
+        int bite_count = ftell(file);
+        rewind(file);
+
+        int i = bite_count / sizeof(struct question_t);
+
+    fread(&list, sizeof(struct question_t), i, file);
+         
+    fclose(file);
 }
 
 int main(int argc, char** argv) {
