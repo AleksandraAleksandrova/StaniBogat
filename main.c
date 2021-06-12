@@ -15,12 +15,12 @@ struct possible_answers_t {
 
 struct question_t {
     int difficulty;
-    struct possible_answers_t possible_answers;
+    struct possible_answers_t* possible_answers;
     char question_text[];
 };
 
 struct node_t {
-    struct question_t question;
+    struct question_t* question;
     struct node_t* next;
     struct node_t* prev;
 };
