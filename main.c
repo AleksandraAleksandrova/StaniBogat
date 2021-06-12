@@ -103,8 +103,7 @@ void joker(){
               }else{
                 printf("You already used this joker.\n");
                 printf("Enter valid joker number >> \n"); 
-                scanf("%d", &response);
-                continue;
+                scanf("%d", &response);             
               }
             }
             case 2:  {
@@ -116,7 +115,6 @@ void joker(){
                 printf("You already used this joker. \n");
                 printf("Enter valid joker number >> \n"); 
                 scanf("%d", &response);
-                continue;
               }
             }
             case 3:  {
@@ -128,7 +126,6 @@ void joker(){
                 printf("You already used this joker. \n");
                 printf("Enter valid joker number >> \n"); 
                 scanf("%d", &response);
-                continue;
               }
             }
         }
@@ -216,8 +213,8 @@ int main(int argc, char** argv) {
         fwrite(&list, sizeof(struct question_t), 0, file);
        
         fclose(file);
-  }
-    //menu(list, file);
+    }
+      //menu(list, file);
 
     return 0;
 }
