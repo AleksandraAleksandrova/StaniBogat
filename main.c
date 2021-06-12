@@ -265,7 +265,6 @@ void menu(int argc, char** argv, struct list_t* list){
 int main(int argc, char** argv) {
     struct list_t list = {NULL, NULL};
 
-<<<<<<< HEAD
     if (argc > 1) {
         FILE* file = fopen(argv[1], "rb");
 
