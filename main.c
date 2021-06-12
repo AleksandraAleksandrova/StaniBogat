@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-struct answer_t{ 
-    int if_to_right;
-    // if the answer is to_right if_to_right = 1 and if the answer is wrong if_to_right = 0
+struct answer_t{
+    int if_right;
+    // if the answer is right if_right = 1 and if the answer is wrong if_right = 0
     char answer_text[];
 };
 
@@ -15,9 +15,9 @@ struct possible_answers_t {
 };
 
 struct question_t {
-    char question_text[];
     int difficulty;
-    struct possible_answers_t possible_answers; 
+    struct possible_answers_t possible_answers;
+    char question_text[];
 };
 
 struct node_t {
@@ -29,7 +29,7 @@ struct node_t {
 struct list_t {
     struct node_t* head;
     struct node_t* tail;
-}
+};
 
 void swap_nodes(struct node_t* left, struct node_t* right) {
     struct node_t* next = right->next;
@@ -76,9 +76,39 @@ void sort_list(struct list_t* list) {
 
 }
 
-
-int main()
-{
-    return 0;
+void start_game(){
 }
 
+void add_question(){
+}
+
+void edit_question(){
+}
+
+void menu(){
+    printf(" *** Welcome to the game 'StaniBogat' *** ");
+    puts("\n");
+    int response = 1;
+
+    while (response) {
+        printf("Choose command:\n");
+        printf("\t 1 - Start game\n");
+        printf("\t 2 - Add question\n");
+        printf("\t 3 - Edit question\n");
+        printf("\t 0 - Exit\n");
+
+        printf(">> ");
+        scanf("%d", &response);
+
+        switch(response){
+            case 1: start_game(); break;
+            case 2: add_question(); break;
+            case 3: edit_question(); break;
+        }
+    }
+}
+
+int main(){
+    menu();
+    return 0;
+}
