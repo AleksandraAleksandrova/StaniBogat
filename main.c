@@ -28,6 +28,7 @@ struct node_t {
 struct list_t {
     struct node_t* head;
     struct node_t* tail;
+    int size;
 };
 
 void swap_nodes(struct node_t* left, struct node_t* right) {
@@ -75,37 +76,74 @@ void sort_list(struct list_t* list) {
 
 }
 
+/*
 void joker(){
     
-    /*printf("\t Choose your joker from 1 to 3\n");
-    printf("50-50\n");
-    printf("Call a friend");
-    printf("Audience poll\n");
+    printf("\t Choose your joker from 1 to 3:\n");
+    printf("[1] 50-50\n");
+    printf("[2] Call a friend");
+    printf("[3] Audience poll\n");
     
-    int response = 1;
+    int response = 0;
     int count = 3;
+    int is_used_50_50 = 0;
+    int is_used_friend = 0;
+    int is_used_audience = 0;
+    // 0 znachi ne e izpolzwan. 1 znachi e polzvan
+
     while(count > 0){
-        printf(>>); 
+        printf("Enter joker number >> \n"); 
         scanf("%d", &response);
     
         switch(response){
-            case 1: \\50-50 break;
-            case 2:\\nekuf random; break;
-            case 3: \\oshte edin random; break;
+            case 1: {
+              if(is_used_50_50 == 0){
+                //funkciq za 50_50;`
+                is_used_50_50 = 1;
+                break;
+              }else{
+                printf("You already used this joker.\n");
+                printf("Enter valid joker number >> \n"); 
+                scanf("%d", &response);
+                continue;
+              }
+            }
+            case 2:  {
+              if(is_used_friend == 0){
+                //funkcq za friend
+                is_used_friend = 1;
+                break;
+              }else{
+                printf("You already used this joker. \n");
+                printf("Enter valid joker number >> \n"); 
+                scanf("%d", &response);
+                continue;
+              }
+            }
+            case 3:  {
+              if(is_used_audience == 0){
+                //funkciq za audience;
+                is_used_audience = 1;
+                break;
+              }else{
+                printf("You already used this joker. \n");
+                printf("Enter valid joker number >> \n"); 
+                scanf("%d", &response);
+                continue;
+              }
+            }
         }
-            
-        
+        count--;
+
         printf("Do you want another joker? y/n");
         char answer;
         scanf("%c", &answer);
         
         if(answer != 'y' || answer != 'Y') break;
-        
-        count--;
     }
-    
-*/
 }
+*/
+
 void start_game(){
     //otvarq faila
     //chete 10 vyprosa
@@ -125,15 +163,66 @@ void add_question(struct list_t* list, FILE* file){
     printf("Write down your question: \n");
     fgets(new_node->question->question_text, 100, file);
 
-
-    
     sort_list(list);
 }
 
-void edit_question(){
+void print_file (struct list_t* list) {
+    
+    struct node_t* curr = list->head;
+    int counter = 1;
+
+    while(curr != NULL) {
+        printf("[%d] %s\n", counter++, curr->question->question_text);
+        curr = curr->next;
+    }
+    
 }
 
-void menu(struct list_t* list, FILE* file){
+void read_file (int argc, char** argv, struct list_t* list, int print) {
+    if (argc > 1) {
+        FILE* file = fopen(argv[1], "rb");
+
+        fseek(file, 0, SEEK_END);
+        int bite_count = ftell(file);
+        rewind(file);
+
+        int i = bite_count / sizeof(struct question_t);
+
+        fread(&list, sizeof(struct question_t), i, file);
+        
+        if (print){
+            print_file(list);
+        }
+
+        fclose(file);
+    }
+}
+
+void write_file(struct  list_t* list){
+    FILE* file = fopen("file./out.bin", "wb");
+
+    fwrite(&list, sizeof(struct question_t), 0, file);
+       
+    fclose(file);
+}
+
+void edit_question(int argc, char** argv, struct list_t* list){
+    printf("Which question to edit?\n");
+    read_file (argc, argv, list, 1);
+    puts("\n");
+    printf("Number:\n");
+    printf(">> ");
+}
+
+/*
+Редактиране на въпрос - реализирайте възможност да се избере съществуващ въпрос и да се промени която и да е информация в него. 
+Подобно на добавянето на нов, след приключване на редакцията трябва редактираният въпрос да е достъпен за избор при начало на игри или 
+при записване във файл. По желание може да разширите работата с:
+- Възможност за избор от потребителя в какъв ред и кои парчета информация иска да редактира(вместо да редактира целия въпрос)
+- Възможност за филтриране на въпросите с цел по-лесно намиране на търсения
+*/
+
+void menu(int argc, char** argv, struct list_t* list){
     printf(" *** Welcome to the game 'StaniBogat' *** ");
     puts("\n");
     int response = 1;
@@ -151,36 +240,17 @@ void menu(struct list_t* list, FILE* file){
         switch(response){
             case 0: exit(0); break;
             case 1: start_game(); break;
-            case 2: add_question(list, file); break;
-            case 3: edit_question(); break;
+            //case 2: add_question(list); break;
+            case 3: edit_question(argc, argv, list); break;
+
         }
     }
 }
 
 int main(int argc, char** argv) {
-
     struct list_t list = {NULL, NULL};
 
-    if (argc > 1) {
-        FILE* file = fopen(argv[1], "rb");
-
-        fseek(file, 0, SEEK_END);
-        int bite_count = ftell(file);
-        rewind(file);
-
-        int i = bite_count / sizeof(struct question_t);
-
-        fread(&list, sizeof(struct question_t), i, file);
-
-        fclose(file);
-    } else {  
-        FILE* file = fopen("./out.bin", "wb");
-
-        fwrite(&list, sizeof(struct question_t), 0, file);
-       
-        fclose(file);
-  }
-    //menu(list, file);
+    menu(argc, argv, &list);
     
     return 0;
 }
