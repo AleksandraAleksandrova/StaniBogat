@@ -3,20 +3,23 @@
 
 struct answer_t{
     int if_right;
-    char answer_text[];
+    char answer_text[100];
+    int if_removed;
 };
 
-struct possible_answers_t {
+/*struct possible_answers_t {
     struct answer_t* a;
     struct answer_t* b;
     struct answer_t* c;
     struct answer_t* d;
-};
+};*/
+
 
 struct question_t {
     int difficulty;
-    struct possible_answers_t* possible_answers;
-    char question_text[];
+    //struct possible_answers_t* possible_answers;
+    char question_text[100];
+    struct answer_t answer[4];
 };
 
 struct node_t {
@@ -76,10 +79,99 @@ void sort_list(struct list_t* list) {
 
 }
 
+int *joker_50_50(struct question_t *question)
+{
+    int wrong_answer[2];
+    int rand;
+    int j=0;
+
+    //namirame 2 greshni otgovora i zapisvame tehnite indeksi v wrong_answer[]
+    while(j<2)
+    {
+        rand = rand() % 3;
+        if(question->answer[rand].if_right == 0)
+        {
+            wrong_answer[j]=rand;
+            question->answer[rand].if_removed = 1;    
+            j++;
+        }
+    }
+
+    //alokirame pamet ot 2*int, koqto shte vurnem kato resultat ot funkciqta. V tazi pamet shte zapishem ind.
+    //na ostanalite dva otgovora
+    int *result = malloc(2*sizeof(int));
+    int i=0;
+    //proverqvame dali indeksa(j) e v wrong_answer, ako ne e go zapisvame v result
+    for(j=0; j<4; j++)
+    {
+        if(wrong_answer[0] != j && wrong_answer[1] != j)
+        {
+            result[i] = j;
+            i++;
+        }
+    } 
+
+    return result;
+}
+
+int joker_call_friend(struct question_t *question)
+{
+    int probability[100];
+    int j=0;// verniq otgovor
+    int k; // broqch za inicializirane na probability masiva
+    int random; //sluchaino chislo, koeto priema indeks na greshen otgovor
+    //po tozi nachin namirame indeksa(j) na pravilniq otgovor
+    while(question->answer[j].if_right != 1)
+    j++;
+
+    if(question->difficulty <= 3)// lesni vpr
+    {
+        for(k=0; k<100; k++)
+         {
+            if(k<80)
+            {
+                 probability[k]=j;
+            }
+            else{
+                while((random = rand() % 3) != j);//teglim sluchaino chislo mejdu 0-3, no ako suvpadne s j(verniq otg) teglim pak
+                probability[k] = random; //drugite 20% poluchavat otg na sluchaen princip
+              }
+            }
+        }
+        else if(question->difficulty >= 4 || question->difficulty <= 6) // sredni vpr
+        {
+            for(k=0; k<100; k++)
+            {
+              if(k<60)
+              {
+                   probability[k]=j;
+              }
+              else{
+                while((random = rand() % 3) != j);//teglim sluchaino chislo mejdu 0-3, no ako suvpadne s j(verniq otg) teglim pak
+                probability[k] = random; //drugite 40% poluchavat otg na sluchaen princip
+              }
+            }
+        }
+        else{//slojni vuprosi
+            for(k=0; k<100; k++)
+            {
+              if(k<30)
+              {
+                   probability[k]=j;
+              }
+              else{
+                while((random = rand() % 3) != j);//teglim sluchaino chislo mejdu 0-3, no ako suvpadne s j(verniq otg) teglim pak
+                probability[k] = random; //drugite 70% poluchavat otg na sluchaen princip
+              }
+            }
+        }
+        random = rand() % 99; //teglim indeksa na nqkoi ot elementite na probability masiva; izteglqme verniq otg
+        // kolkoto poveche indeksi na verni otg, tolkva po-golqm e shansa da se iztegli verniq otg
+        return probability[random];   
+}
 
 
-/*
-void joker(){
+void joker(struct question_t *question){
     
     printf("\t Choose your joker from 1 to 3:\n");
     printf("[1] 50-50\n");
@@ -100,7 +192,14 @@ void joker(){
         switch(response){
             case 1: {
               if(is_used_50_50 == 0){
-                //funkciq za 50_50;`
+                //funkciq za joker 50/50
+                //masiv ot 2*int res50_50
+                int *res50_50 = joker_50_50(question);
+                for(int i=0; i<=2; i++)
+                {
+                    printf("[%d] %s", res50_50[i], question->answer[res50_50[i]].answer_text);
+                }
+                free(res50_50);
                 is_used_50_50 = 1;
                 break;
               }else{
@@ -142,7 +241,7 @@ void joker(){
     }
 }
 // da se slozhi goto vmesto continue
-*/
+
 
 void start_game(){
     //otvarq faila
@@ -195,7 +294,7 @@ void print_file (struct list_t* list) {
     
 }
 
-void read_file (int argc, char** argv, struct list_t* list, int print) {
+/*void read_file (int argc, char** argv, struct list_t* list, int print) {
     if (argc > 1) {
         FILE* file = fopen(argv[1], "rb");
 
@@ -221,7 +320,7 @@ void write_file(struct  list_t* list){
     fwrite(&list, sizeof(struct question_t), 0, file);
        
     fclose(file);
-}
+}*/
 
 void edit_question(int argc, char** argv, struct list_t* list){
     int question = 0;
@@ -357,9 +456,9 @@ void menu(int argc, char** argv, struct list_t* list){
     }
 }
 
-void fwrite_questions(struct list_t *list, char* out.bin)
+void fwrite_questions(struct list_t *list, char* filename)
 {
-    FILE* file = fopen("file./out.bin", "wb");
+    FILE* file = fopen(filename, "wba");
 
     if(file == NULL)
     {
@@ -367,50 +466,61 @@ void fwrite_questions(struct list_t *list, char* out.bin)
       return;
     }
 
-    size_t count = fwrite(&list, sizeof(struct question_t), 10, file);
+    size_t count = fwrite(&list, sizeof(struct question_t), 1, file);
 
     if(count == 0)
     {
         printf("Error");
         return;
     }
-
-    if (print){
-            print_file(list);
-        }
         
     fclose(file);
 }
 
-struct list_t fread_questions(struct list_t *list, char* out.bin)
+struct node_t *fread_questions(char* filename)//prochitame faila i vrushtame, tova koeto sme procheli
 {
-    FILE* file = fopen("file./out.bin", "rb");
+    FILE* file = fopen(filename, "rb");
+
     fseek(file, 0, SEEK_END);
-        int bite_count = ftell(file);
-        rewind(file);
+    int bite_count = ftell(file);
+    rewind(file);
 
-        int i = bite_count / sizeof(struct question_t);
-
-    fread(&list, sizeof(struct question_t), i, file);
-         
+    int i = bite_count / sizeof(struct question_t);
+    struct question_t questions[i];
+    if(i>=10)
+    {
+        fread(&questions, sizeof(struct question_t), i, file);
+    }
+    else printf("Not enough questions");
+    
     fclose(file);
+
+    int j;
+    struct node_t *head; //suzdavame edin spisuk, koito shte sudurja node_t structuri i shte go vurnem
+    //edin spisuk ot question structuri
+     struct node_t *new;
+    for(j=0; j<i; j++)
+    {
+        new = malloc(sizeof(struct node_t));
+        new->question = malloc(sizeof(struct question_t));
+        memcopy(questions[j], new->question, sizeof(struct question_t)); //kopirame pametta na question[j] vuvu ukazatelq new
+        node->next = NULL;
+        node->prev = 
+        // da se doprenasochat ukazatelite
+
+        if(j == 0)
+        {
+            head = new;
+        }
+    }
+    return head;
 }
 
-int main(int argc, char** argv) {
-    struct list_t list = {NULL, NULL};
-
+int main(int argc, char** argv) 
+{
+  struct node_t *question_list;
     if (argc > 1) {
-        FILE* file = fopen(argv[1], "rb");
-
-        fseek(file, 0, SEEK_END);
-        int bite_count = ftell(file);
-        rewind(file);
-
-        int i = bite_count / sizeof(struct question_t);
-
-        fread(&list, sizeof(struct question_t), i, file);
-
-        fclose(file);
+        question_list = fread_questions(argv[1]));
     } else {  
         FILE* file = fopen("./out.bin", "wb");
 
@@ -420,5 +530,6 @@ int main(int argc, char** argv) {
     }
       //menu(list, file);
 
+  //trqbva da osvobodim pametta
   return 0;
 }
