@@ -7,10 +7,10 @@ struct answer_t{
 };
 
 struct possible_answers_t {
-    struct answer_t a;
-    struct answer_t b;
-    struct answer_t c;
-    struct answer_t d;
+    struct answer_t* a;
+    struct answer_t* b;
+    struct answer_t* c;
+    struct answer_t* d;
 };
 
 struct question_t {
@@ -224,11 +224,104 @@ void write_file(struct  list_t* list){
 }
 
 void edit_question(int argc, char** argv, struct list_t* list){
+    int question = 0;
+    int answer = 0;
+
     printf("Which question to edit?\n");
     read_file (argc, argv, list, 1);
+    
     puts("\n");
+
     printf("Number:\n");
     printf(">> ");
+    scanf("%d", &question);
+
+    struct node_t* curr = list->head;
+    int counter = 1;
+
+    while(counter < question) {
+        curr = curr->next;
+    }
+    
+    int change = 1;
+    while (change) {
+        printf("What to change? : \n");
+        printf("\t 1 - Text of the question \n");
+        printf("\t 2 - Difficulty \n");
+        printf("\t 3 - Answer's text \n");
+        printf("\t 4 - Right answer \n");
+        printf("\t 0 - Nothing \n");
+        
+        printf(">> ");
+        scanf("%d", &change);
+
+        switch(change){
+            case 1:
+                printf("Enter text: \n");
+                printf(">> ");
+                fgets(curr->question->question_text, 100, stdin);
+                break;
+            case 2:
+                do{
+                    printf("Enter difficulty: \n");
+                    printf(">> ");
+                    scanf("%d", &curr->question->difficulty);
+                }while(curr->question->difficulty<10 && curr->question->difficulty>0);
+                break;
+            case 3:
+                printf("Which answer to edit: \n");
+                printf("1 - a)\n");
+                printf("2 - b)\n");
+                printf("3 - c)\n");
+                printf("4 - d)\n");
+                printf(">> ");
+                scanf("%d", &answer);
+
+                printf("Enter text: \n");
+                printf(">> ");
+                switch(answer){
+                    case 1: 
+                        fgets(curr->question->possible_answers->a->answer_text, 100, stdin);
+                        break;
+                    case 2:
+                        fgets(curr->question->possible_answers->b->answer_text, 100, stdin);
+                        break;
+                    case 3:
+                        fgets(curr->question->possible_answers->c->answer_text, 100, stdin);
+                        break;
+                    case 4: break;
+                        fgets(curr->question->possible_answers->d->answer_text, 100, stdin);
+                        break;
+                } 
+                break;
+            case 4:/*
+                printf("Which answer to edit: \n");
+                printf("1 - a)\n");
+                printf("2 - b)\n");
+                printf("3 - c)\n");
+                printf("4 - d)\n");
+                printf(">> ");
+                scanf("%d", &answer);
+                switch(answer){
+                    case 1: 
+                        scanf("%d", &curr->question->possible_answers->a->if_right);
+                        break;
+                    case 2:
+                        scanf("%d", &curr->question->possible_answers->b->if_right);
+                        break;
+                    case 3:
+                        scanf("%d", &curr->question->possible_answers->c->if_right);
+                        break;
+                    case 4: break;
+                        scanf("%d", &curr->question->possible_answers->d->if_right);
+                        break;
+                } */ /*Not working*/
+                break;
+            case 0:
+                change = 0;
+                break;
+    }
+  }
 }
 
 /*
