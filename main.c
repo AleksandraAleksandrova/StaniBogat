@@ -284,7 +284,7 @@ void add_question(struct list_t* list, FILE* file){
     
     int num_of_questions;
     printf("How many questions would you like to add?\n");
-    scanf("%d", num_of_questions);
+    scanf("%d", &num_of_questions);
     printf("\n");
 
     while(num_of_questions > 0){
@@ -364,6 +364,7 @@ void menu(struct list_t* list, FILE* file){
 }
 
 
+<<<<<<< HEAD
 void fwrite_questions(struct list_t *list, char* filename)
 {
     FILE* file = fopen(filename, "wba");
@@ -429,6 +430,9 @@ struct node_t *fread_questions(struct list_t* list, char* filename, int print_fl
 }
 
 void edit_question(char* filename, FILE* file, struct list_t* list){
+=======
+/*void edit_question(int argc, char** argv, struct list_t* list, FILE* file){
+>>>>>>> c13d0d992bbe3de0991b02678314d3c3176043e4
     int question = 0;
     int answer = 0;
     
