@@ -258,15 +258,22 @@ void start_game(){
     
     struct node_t* new_node = malloc(sizeof(struct node_t));
 
+    char answer_letter = 'a';
+
     printf("Difficulty (From 1-10): \n");
-    scanf("%d", new_node->question->difficulty);
+    fscanf(file, "%d", new_node->question->difficulty);
     printf("Write down your question: \n");
     fgets(new_node->question->question_text, 100, file);
-    printf("Enter answer a: \n");
-    fgets(new_node->question->question_text, 30, file);
-    printf("Is it the right answer? \n");
-    scanf("%d", &new_node->question->answer->if_right);
-    // za dopisvane
+    
+    for(int i = 0;i < 4;i++){
+        
+        printf("Enter answer %c: \n", answer_letter);
+        fgets(new_node->question->question_text, 30, file);
+        printf("Is it the right answer?(1 - true ; 0 - false) \n");
+        fscanf(file, "%d", &new_node->question->answer->if_right);
+        answer_letter++;
+    }
+    
 
     return new_node;
  }
@@ -274,11 +281,18 @@ void start_game(){
 void add_question(struct list_t* list, FILE* file){
     
     struct node_t* new_node;
-    new_node = init_question(file);
     
+    int num_of_questions;
+    printf("How many questions would you like to add?\n");
+    scanf("%d", num_of_questions);
+    printf("\n");
 
-
-
+    while(num_of_questions > 0){
+        new_node = init_question(file);
+        num_of_questions--;
+    }
+    
+//Възможност за избор от потребителя в какъв ред иска да въведе парчетата информация за въпроса
 
     sort_list(list);
 }
@@ -324,8 +338,7 @@ void write_file(struct  list_t* list){
 }
 */
 
-
-void menu(int argc, char** argv, struct list_t* list){
+void menu(struct list_t* list, FILE* file){
     printf(" *** Welcome to the game 'StaniBogat' *** ");
     puts("\n");
     int response = 1;
@@ -343,12 +356,13 @@ void menu(int argc, char** argv, struct list_t* list){
         switch(response){
             case 0: exit(0); break;
             case 1: start_game(); break;
-            //case 2: add_question(list); break;
-           case 3: edit_question(filename, file, list); break;
-// bravo na nas
+            case 2: add_question(list, file); break;
+           // case 3: edit_question(argc, argv, list); break;
+// bravo na nas <33 mnogo lyubov macki <#3333333 istinski kotaranki, lovkam vi <333333
         }
     }
 }
+
 
 void fwrite_questions(struct list_t *list, char* filename)
 {
@@ -371,7 +385,7 @@ void fwrite_questions(struct list_t *list, char* filename)
     fclose(file);
 }
 
-struct node_t *fread_questions(char* filename, int print_flag)//prochitame faila i vrushtame, tova koeto sme procheli
+struct node_t *fread_questions(struct list_t* list, char* filename, int print_flag)//prochitame faila i vrushtame, tova koeto sme procheli
 {
     FILE* file = fopen(filename, "rb");
 
@@ -523,19 +537,43 @@ void edit_question(char* filename, FILE* file, struct list_t* list){
 - Възможност за филтриране на въпросите с цел по-лесно намиране на търсения
 */
 
+void fwrite_questions(struct list_t *list, char* filename)
+{
+    FILE* file = fopen(filename, "wba");
+
+    if(file == NULL)
+    {
+      printf("Error");
+      return;
+    }
+
+    size_t count = fwrite(&list, sizeof(struct question_t), 1, file);
+
+    if(count == 0)
+    {
+        printf("Error");
+        return;
+    }
+        
+    fclose(file);
+}
+
 int main(int argc, char** argv) 
 {
-  struct node_t *question_list;
+  struct list_t question_list;
+  //{
+      /* data */
+  //};
     if (argc > 1) {
-        question_list = fread_questions(argv[1], 0);
+        question_list.head = fread_questions(&question_list, argv[1], 0);
     } else {  
         FILE* file = fopen("./out.bin", "wb");
 
-        fwrite(question_list, sizeof(struct question_t), 0, file);
-       
+        fwrite(&question_list, sizeof(struct question_t), 0, file);
+        menu(&question_list, file);
         fclose(file);
     }
-      //menu(list, file);
+      
 
   //trqbva da osvobodim pametta
   return 0;
