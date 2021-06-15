@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 struct answer_t{
     int if_right;
@@ -82,17 +83,17 @@ void sort_list(struct list_t* list) {
 int *joker_50_50(struct question_t *question)
 {
     int wrong_answer[2];
-    int rand;
+    int rand_answer;
     int j=0;
 
     //namirame 2 greshni otgovora i zapisvame tehnite indeksi v wrong_answer[]
     while(j<2)
     {
-        rand = rand() % 3;
-        if(question->answer[rand].if_right == 0)
+        rand_answer = rand() % 3;
+        if(question->answer[rand_answer].if_right == 0)
         {
-            wrong_answer[j]=rand;
-            question->answer[rand].if_removed = 1;    
+            wrong_answer[j]=rand_answer;
+            question->answer[rand_answer].if_removed = 1;    
             j++;
         }
     }
@@ -253,7 +254,7 @@ void start_game(){
     //ako e veren vzima sledvashtiq
     //ako e greshen se vryshta v menu()
 }
- struct node_t* init_question(file){
+ struct node_t* init_question(FILE *file){
     
     struct node_t* new_node = malloc(sizeof(struct node_t));
 
@@ -262,9 +263,9 @@ void start_game(){
     printf("Write down your question: \n");
     fgets(new_node->question->question_text, 100, file);
     printf("Enter answer a: \n");
-    fgets(new_node->question->possible_answers->a.answer_text, 30, file);
+    fgets(new_node->question->question_text, 30, file);
     printf("Is it the right answer? \n");
-    scanf("%d", &new_node->question->possible_answers->a.if_right);
+    scanf("%d", &new_node->question->answer->if_right);
     // za dopisvane
 
     return new_node;
@@ -320,9 +321,9 @@ void write_file(struct  list_t* list){
     fwrite(&list, sizeof(struct question_t), 0, file);
        
     fclose(file);
-}*/
+}
 
-void edit_question(int argc, char** argv, struct list_t* list){
+/*void edit_question(int argc, char** argv, struct list_t* list){
     int question = 0;
     int answer = 0;
 
@@ -414,14 +415,14 @@ void edit_question(int argc, char** argv, struct list_t* list){
                     case 4: break;
                         scanf("%d", &curr->question->possible_answers->d->if_right);
                         break;
-                } */ /*Not working*/
-                break;
-            case 0:
-                change = 0;
-                break;
-    }
-  }
-}
+                }  /*Not working*/
+              //  break;
+           // case 0:
+             //   change = 0;
+              //  break;
+   // }
+  //}
+//}
 
 /*
 Редактиране на въпрос - реализирайте възможност да се избере съществуващ въпрос и да се промени която и да е информация в него. 
@@ -450,8 +451,8 @@ void menu(int argc, char** argv, struct list_t* list){
             case 0: exit(0); break;
             case 1: start_game(); break;
             //case 2: add_question(list); break;
-            case 3: edit_question(argc, argv, list); break;
-
+           // case 3: edit_question(argc, argv, list); break;
+// bravo na nas
         }
     }
 }
@@ -503,9 +504,9 @@ struct node_t *fread_questions(char* filename)//prochitame faila i vrushtame, to
     {
         new = malloc(sizeof(struct node_t));
         new->question = malloc(sizeof(struct question_t));
-        memcopy(questions[j], new->question, sizeof(struct question_t)); //kopirame pametta na question[j] vuvu ukazatelq new
-        node->next = NULL;
-        node->prev = 
+        memcpy(&questions[j], new->question, sizeof(struct question_t)); //kopirame pametta na question[j] vuvu ukazatelq new
+        head->next = NULL;
+        //head->prev = 
         // da se doprenasochat ukazatelite
 
         if(j == 0)
@@ -520,11 +521,11 @@ int main(int argc, char** argv)
 {
   struct node_t *question_list;
     if (argc > 1) {
-        question_list = fread_questions(argv[1]));
+        question_list = fread_questions(argv[1]);
     } else {  
         FILE* file = fopen("./out.bin", "wb");
 
-        fwrite(&list, sizeof(struct question_t), 0, file);
+        fwrite(question_list, sizeof(struct question_t), 0, file);
        
         fclose(file);
     }
