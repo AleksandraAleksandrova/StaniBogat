@@ -322,115 +322,8 @@ void write_file(struct  list_t* list){
        
     fclose(file);
 }
-
-/*void edit_question(int argc, char** argv, struct list_t* list){
-    int question = 0;
-    int answer = 0;
-
-    printf("Which question to edit?\n");
-    read_file (argc, argv, list, 1);
-    
-    puts("\n");
-
-    printf("Number:\n");
-    printf(">> ");
-    scanf("%d", &question);
-
-    struct node_t* curr = list->head;
-    int counter = 1;
-
-    while(counter < question) {
-        curr = curr->next;
-    }
-    
-    int change = 1;
-    while (change) {
-        printf("What to change? : \n");
-        printf("\t 1 - Text of the question \n");
-        printf("\t 2 - Difficulty \n");
-        printf("\t 3 - Answer's text \n");
-        printf("\t 4 - Right answer \n");
-        printf("\t 0 - Nothing \n");
-        
-        printf(">> ");
-        scanf("%d", &change);
-
-        switch(change){
-            case 1:
-                printf("Enter text: \n");
-                printf(">> ");
-                fgets(curr->question->question_text, 100, stdin);
-                break;
-            case 2:
-                do{
-                    printf("Enter difficulty: \n");
-                    printf(">> ");
-                    scanf("%d", &curr->question->difficulty);
-                }while(curr->question->difficulty<10 && curr->question->difficulty>0);
-                break;
-            case 3:
-                printf("Which answer to edit: \n");
-                printf("1 - a)\n");
-                printf("2 - b)\n");
-                printf("3 - c)\n");
-                printf("4 - d)\n");
-                printf(">> ");
-                scanf("%d", &answer);
-
-                printf("Enter text: \n");
-                printf(">> ");
-                switch(answer){
-                    case 1: 
-                        fgets(curr->question->possible_answers->a->answer_text, 100, stdin);
-                        break;
-                    case 2:
-                        fgets(curr->question->possible_answers->b->answer_text, 100, stdin);
-                        break;
-                    case 3:
-                        fgets(curr->question->possible_answers->c->answer_text, 100, stdin);
-                        break;
-                    case 4: break;
-                        fgets(curr->question->possible_answers->d->answer_text, 100, stdin);
-                        break;
-                } 
-                break;
-            case 4:/*
-                printf("Which answer to edit: \n");
-                printf("1 - a)\n");
-                printf("2 - b)\n");
-                printf("3 - c)\n");
-                printf("4 - d)\n");
-                printf(">> ");
-                scanf("%d", &answer);
-                switch(answer){
-                    case 1: 
-                        scanf("%d", &curr->question->possible_answers->a->if_right);
-                        break;
-                    case 2:
-                        scanf("%d", &curr->question->possible_answers->b->if_right);
-                        break;
-                    case 3:
-                        scanf("%d", &curr->question->possible_answers->c->if_right);
-                        break;
-                    case 4: break;
-                        scanf("%d", &curr->question->possible_answers->d->if_right);
-                        break;
-                }  /*Not working*/
-              //  break;
-           // case 0:
-             //   change = 0;
-              //  break;
-   // }
-  //}
-//}
-
-/*
-Редактиране на въпрос - реализирайте възможност да се избере съществуващ въпрос и да се промени която и да е информация в него. 
-Подобно на добавянето на нов, след приключване на редакцията трябва редактираният въпрос да е достъпен за избор при начало на игри или 
-при записване във файл. По желание може да разширите работата с:
-- Възможност за избор от потребителя в какъв ред и кои парчета информация иска да редактира(вместо да редактира целия въпрос)
-- Възможност за филтриране на въпросите с цел по-лесно намиране на търсения
 */
+
 
 void menu(int argc, char** argv, struct list_t* list){
     printf(" *** Welcome to the game 'StaniBogat' *** ");
@@ -451,7 +344,7 @@ void menu(int argc, char** argv, struct list_t* list){
             case 0: exit(0); break;
             case 1: start_game(); break;
             //case 2: add_question(list); break;
-           // case 3: edit_question(argc, argv, list); break;
+           case 3: edit_question(filename, file, list); break;
 // bravo na nas
         }
     }
@@ -478,7 +371,7 @@ void fwrite_questions(struct list_t *list, char* filename)
     fclose(file);
 }
 
-struct node_t *fread_questions(char* filename)//prochitame faila i vrushtame, tova koeto sme procheli
+struct node_t *fread_questions(char* filename, int print_flag)//prochitame faila i vrushtame, tova koeto sme procheli
 {
     FILE* file = fopen(filename, "rb");
 
@@ -488,15 +381,19 @@ struct node_t *fread_questions(char* filename)//prochitame faila i vrushtame, to
 
     int i = bite_count / sizeof(struct question_t);
     struct question_t questions[i];
+    int j = 0;
     if(i>=10)
     {
         fread(&questions, sizeof(struct question_t), i, file);
+        if (print_flag == 1){
+            printf("[%d] - %s", ++j, questions[i]);
+        }
     }
     else printf("Not enough questions");
     
     fclose(file);
 
-    int j;
+    j=0;
     struct node_t *head; //suzdavame edin spisuk, koito shte sudurja node_t structuri i shte go vurnem
     //edin spisuk ot question structuri
      struct node_t *new;
@@ -517,11 +414,120 @@ struct node_t *fread_questions(char* filename)//prochitame faila i vrushtame, to
     return head;
 }
 
+void edit_question(char* filename, FILE* file, struct list_t* list){
+    int question = 0;
+    int answer = 0;
+    
+    printf("Which question to edit?\n");
+    fread_questions(filename, 1);
+    
+    puts("\n");
+
+    printf("Number:\n");
+    printf(">> ");
+    scanf("%d", &question);
+
+    struct node_t* curr = list->head;
+    int counter = 1;
+
+    while(counter < question) {
+        curr = curr->next;s
+    }
+    
+    int change = 1;
+    while (change) {
+        printf("What to change? : \n");
+        printf("\t 1 - Text of the question \n");
+        printf("\t 2 - Difficulty \n");
+        printf("\t 3 - Answer's text \n");
+        printf("\t 4 - Right answer \n");
+        printf("\t 0 - Nothing \n");
+        
+        printf(">> ");
+        scanf("%d", &change);
+
+        switch(change){
+            case 1:
+                printf("Enter text: \n");
+                printf(">> ");
+                fgets(curr->question->question_text, 100, file);
+                break;
+            case 2:
+                do{
+                    printf("Enter difficulty: \n");
+                    printf(">> ");
+                    scanf("%d", &curr->question->difficulty);
+                }while(curr->question->difficulty<10 && curr->question->difficulty>0);
+                break;
+            case 3:
+                printf("Which answer to edit: \n");
+                printf("1 - a)\n");
+                printf("2 - b)\n");
+                printf("3 - c)\n");
+                printf("4 - d)\n");
+                printf(">> ");
+                scanf("%d", &answer);
+
+                printf("Enter text: \n");
+                printf(">> ");
+                switch(answer){
+                    case 1: 
+                        fgets(curr->question->answer[0].answer_text, 100, file);
+                        break;
+                    case 2:
+                        fgets(curr->question->answer[1].answer_text, 100, file);
+                        break;
+                    case 3:
+                        fgets(curr->question->answer[2].answer_text, 100, file);
+                        break;
+                    case 4: break;
+                        fgets(curr->question->answer[3].answer_text, 100, file);
+                        break;
+                } 
+                break;
+            /*case 4:
+                printf("Which answer to edit: \n");
+                printf("1 - a)\n");
+                printf("2 - b)\n");
+                printf("3 - c)\n");
+                printf("4 - d)\n");
+                printf(">> ");
+                scanf("%d", &answer);
+                switch(answer){
+                    case 1: 
+                        scanf("%d", &curr->question->possible_answers->a->if_right);
+                        break;
+                    case 2:
+                        scanf("%d", &curr->question->possible_answers->b->if_right);
+                        break;
+                    case 3:
+                        scanf("%d", &curr->question->possible_answers->c->if_right);
+                        break;
+                    case 4: break;
+                        scanf("%d", &curr->question->possible_answers->d->if_right);
+                        break;
+                } 
+              //  break;*/
+            case 0:
+                change = 0;
+                break;
+        }
+    }
+}
+
+/*
+Редактиране на въпрос - реализирайте възможност да се избере съществуващ въпрос и да се промени която и да е информация в него. 
+Подобно на добавянето на нов, след приключване на редакцията трябва редактираният въпрос да е достъпен за избор при начало на игри или 
+при записване във файл. По желание може да разширите работата с:
+- Възможност за избор от потребителя в какъв ред и кои парчета информация иска да редактира(вместо да редактира целия въпрос)
+- Възможност за филтриране на въпросите с цел по-лесно намиране на търсения
+*/
+
 int main(int argc, char** argv) 
 {
   struct node_t *question_list;
     if (argc > 1) {
-        question_list = fread_questions(argv[1]);
+        question_list = fread_questions(argv[1], 0);
     } else {  
         FILE* file = fopen("./out.bin", "wb");
 
