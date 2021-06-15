@@ -284,7 +284,7 @@ void add_question(struct list_t* list, FILE* file){
     
     int num_of_questions;
     printf("How many questions would you like to add?\n");
-    scanf("%d", num_of_questions);
+    scanf("%d", &num_of_questions);
     printf("\n");
 
     while(num_of_questions > 0){
@@ -337,7 +337,7 @@ void write_file(struct  list_t* list){
     fclose(file);
 }
 
-/*void edit_question(int argc, char** argv, struct list_t* list){
+/*void edit_question(int argc, char** argv, struct list_t* list, FILE* file){
     int question = 0;
     int answer = 0;
 
@@ -373,7 +373,7 @@ void write_file(struct  list_t* list){
             case 1:
                 printf("Enter text: \n");
                 printf(">> ");
-                fgets(curr->question->question_text, 100, stdin);
+                fgets(curr->question->question_text, 100, file);
                 break;
             case 2:
                 do{
