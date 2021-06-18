@@ -212,6 +212,12 @@ void joker(struct question_t *question){
             case 2:  {
               if(is_used_friend == 0){
                 //funkcq za friend
+                int *call_friend = joker_call_friend(question);
+                for(int i=0; i<=2; i++)
+                {
+                    printf("[%d] %s", call_friend[i], question->answer[call_friend[i]].answer_text);
+                }
+                free(call_friend);
                 is_used_friend = 1;
                 break;
               }else{
