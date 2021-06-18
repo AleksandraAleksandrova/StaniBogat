@@ -15,7 +15,6 @@ struct answer_t{
     struct answer_t* d;
 };*/
 
-
 struct question_t {
     int difficulty;
     //struct possible_answers_t* possible_answers;
@@ -171,7 +170,6 @@ int joker_call_friend(struct question_t *question)
         return probability[random];   
 }
 
-
 void joker(struct question_t *question){
     
     printf("\t Choose your joker from 1 to 3:\n");
@@ -251,15 +249,34 @@ void joker(struct question_t *question){
 
 
 void start_game(){
-    //otvarq faila
-    //chete 10 vyprosa
-    //slaga gi v spisyk
-    //spisyka se podrejda
-    //vseki vypros se printira s vernite otgovori
-    //proverqva se otgovora dali e veren
-    //ako e veren vzima sledvashtiq
-    //ako e greshen se vryshta v menu()
+    /*
+    funkciq za chetene ot fail s vryshtane na vyprosi
+    list_t vyrnat list;
+    int given_answer;
+    struct node_t* curr = malloc(sizeof(struct node_t));
+    for(curr = list head; curr->next==0; curr=curr->next){
+        printf("%s \n", curr->question->question_text)
+        for(int i=0; i<=3; i++){
+            printf("[%d]  %s \n", i+1 ,curr->question->answer[i]->answer_text);
+        }
+        printf("Please enter your answer number ot 'j' to ask for a joker.");
+        scanf("%d", &given_answer);
+        if(given_answer!='j' && given_answer!=1 && given_answer!=2 && given_answer=!='3' $$ given_answer!=4){
+            printf("Please enter valid answer. \n");
+            scanf("%d", &given_answer);
+        }
+        if(given_answer=='j') {
+            joker(curr->question);
+        }
+        if(curr->question->answer[given_answer]->if_right==0) {
+            printf ("Sorry, you lost the game. \n");
+            menu();
+        }
+        continue;       
+    }
+    */
 }
+
  struct node_t* init_question(FILE *file){
     
     struct node_t* new_node = malloc(sizeof(struct node_t));
