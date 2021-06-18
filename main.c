@@ -320,13 +320,15 @@ struct list_t *fread_questions(struct list_t* list, char* filename)//prochitame 
     int bite_count = ftell(file);
     rewind(file);
 
-    int size_of_file = bite_count / sizeof(struct question_t);
+    //int size_of_file = bite_count / sizeof(struct question_t);
     int i = 0;
     struct question_t questions[10];
 
     while(i<10){
-        int rand_num = rand() % size_of_file;
-        fread(&questions, (sizeof(struct question_t)), rand_num, file);
+        int rand_num = rand() % bite_count;
+        fseek(file, rand_num, SEEK_SET);
+        fread(&questions, (sizeof(struct question_t)), 1, file);
+        rewind(file);
     }
 
     fclose(file);
