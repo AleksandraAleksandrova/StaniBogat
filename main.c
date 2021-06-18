@@ -297,74 +297,6 @@ void add_question(struct list_t* list, FILE* file){
     sort_list(list);
 }
 
-void print_file (struct list_t* list) {
-    
-    struct node_t* curr = list->head;
-    int counter = 1;
-
-    while(curr != NULL) {
-        printf("[%d] %s\n", counter++, curr->question->question_text);
-        curr = curr->next;
-    }
-    
-}
-
-/*void read_file (int argc, char** argv, struct list_t* list, int print) {
-    if (argc > 1) {
-        FILE* file = fopen(argv[1], "rb");
-
-        fseek(file, 0, SEEK_END);
-        int bite_count = ftell(file);
-        rewind(file);
-
-        int i = bite_count / sizeof(struct question_t);
-
-        fread(&list, sizeof(struct question_t), i, file);
-        
-        if (print){
-            print_file(list);
-        }
-
-        fclose(file);
-    }
-}
-
-void write_file(struct  list_t* list){
-    FILE* file = fopen("file./out.bin", "wb");
-
-    fwrite(&list, sizeof(struct question_t), 0, file);
-       
-    fclose(file);
-}
-*/
-
-void menu(struct list_t* list, FILE* file){
-    printf(" *** Welcome to the game 'StaniBogat' *** ");
-    puts("\n");
-    int response = 1;
-
-    while (response) {
-        printf("Choose command:\n");
-        printf("\t 1 - Start game\n");
-        printf("\t 2 - Add question\n");
-        printf("\t 3 - Edit question\n");
-        printf("\t 0 - Exit\n");
-
-        printf(">> ");
-        scanf("%d", &response);
-
-        switch(response){
-            case 0: exit(0); break;
-            case 1: start_game(); break;
-            case 2: add_question(list, file); break;
-           // case 3: edit_question(argc, argv, list); break;
-// bravo na nas <33 mnogo lyubov macki <#3333333 istinski kotaranki, lovkam vi <333333
-        }
-    }
-}
-
-
-<<<<<<< HEAD
 void fwrite_questions(struct list_t *list, char* filename)
 {
     FILE* file = fopen(filename, "wba");
@@ -386,7 +318,7 @@ void fwrite_questions(struct list_t *list, char* filename)
     fclose(file);
 }
 
-struct node_t *fread_questions(struct list_t* list, char* filename, int print_flag)//prochitame faila i vrushtame, tova koeto sme procheli
+struct node_t *fread_questions(struct list_t* list, char* filename)//prochitame faila i vrushtame, tova koeto sme procheli
 {
     FILE* file = fopen(filename, "rb");
 
@@ -400,9 +332,6 @@ struct node_t *fread_questions(struct list_t* list, char* filename, int print_fl
     if(i>=10)
     {
         fread(&questions, sizeof(struct question_t), i, file);
-        if (print_flag == 1){
-            printf("[%d] - %s", ++j, questions[i]);
-        }
     }
     else printf("Not enough questions");
     
@@ -429,15 +358,24 @@ struct node_t *fread_questions(struct list_t* list, char* filename, int print_fl
     return head;
 }
 
-void edit_question(char* filename, FILE* file, struct list_t* list){
-=======
-/*void edit_question(int argc, char** argv, struct list_t* list, FILE* file){
->>>>>>> c13d0d992bbe3de0991b02678314d3c3176043e4
+void print_list (struct list_t* list) {
+    
+    struct node_t* curr = list->head;
+    int counter = 1;
+
+    while(curr != NULL) {
+        printf("[%d] %s\n", counter++, curr->question->question_text);
+        curr = curr->next;
+    }
+    
+}
+
+void edit_question(struct list_t* list){
     int question = 0;
-    int answer = 0;
+    int answer = 1;
     
     printf("Which question to edit?\n");
-    fread_questions(filename, 1);
+    print_list(list);
     
     puts("\n");
 
@@ -449,7 +387,7 @@ void edit_question(char* filename, FILE* file, struct list_t* list){
     int counter = 1;
 
     while(counter < question) {
-        curr = curr->next;s
+        curr = curr->next;
     }
     
     int change = 1;
@@ -468,7 +406,7 @@ void edit_question(char* filename, FILE* file, struct list_t* list){
             case 1:
                 printf("Enter text: \n");
                 printf(">> ");
-                fgets(curr->question->question_text, 100, file);
+                fgets(curr->question->question_text, 100, stdin);
                 break;
             case 2:
                 do{
@@ -478,7 +416,39 @@ void edit_question(char* filename, FILE* file, struct list_t* list){
                 }while(curr->question->difficulty<10 && curr->question->difficulty>0);
                 break;
             case 3:
-                printf("Which answer to edit: \n");
+                while (answer){
+                    printf("Which answer to edit: \n");
+                    printf("1 - a)\n");
+                    printf("2 - b)\n");
+                    printf("3 - c)\n");
+                    printf("4 - d)\n");
+                    printf("0 - Stop\n");
+                    printf(">> ");
+                    scanf("%d", &answer);
+
+                    printf("Enter text: \n");
+                    printf(">> ");
+                    switch(answer){
+                        case 1: 
+                            fgets(curr->question->answer[0].answer_text, 100, stdin);
+                            break;
+                        case 2:
+                            fgets(curr->question->answer[1].answer_text, 100, stdin);
+                            break;
+                        case 3:
+                            fgets(curr->question->answer[2].answer_text, 100, stdin);
+                            break;
+                        case 4: 
+                            fgets(curr->question->answer[3].answer_text, 100, stdin);
+                            break;
+                        case 5: 
+                            answer = 0;
+                            break;
+                    }
+                } 
+                break;
+            case 4:
+                printf("Which answer is right: \n");
                 printf("1 - a)\n");
                 printf("2 - b)\n");
                 printf("3 - c)\n");
@@ -486,50 +456,29 @@ void edit_question(char* filename, FILE* file, struct list_t* list){
                 printf(">> ");
                 scanf("%d", &answer);
 
-                printf("Enter text: \n");
-                printf(">> ");
+                curr->question->answer[0].if_right = 0;
+                curr->question->answer[1].if_right = 0;
+                curr->question->answer[2].if_right = 0;
+                curr->question->answer[3].if_right = 0;
+
                 switch(answer){
                     case 1: 
-                        fgets(curr->question->answer[0].answer_text, 100, file);
+                        scanf("%d", &curr->question->answer[0].if_right);
                         break;
                     case 2:
-                        fgets(curr->question->answer[1].answer_text, 100, file);
+                        scanf("%d", &curr->question->answer[1].if_right);
                         break;
                     case 3:
-                        fgets(curr->question->answer[2].answer_text, 100, file);
+                        scanf("%d", &curr->question->answer[2].if_right);
                         break;
                     case 4: break;
-                        fgets(curr->question->answer[3].answer_text, 100, file);
+                        scanf("%d", &curr->question->answer[3].if_right);
                         break;
                 } 
-                break;
-            /*case 4:
-                printf("Which answer to edit: \n");
-                printf("1 - a)\n");
-                printf("2 - b)\n");
-                printf("3 - c)\n");
-                printf("4 - d)\n");
-                printf(">> ");
-                scanf("%d", &answer);
-                switch(answer){
-                    case 1: 
-                        scanf("%d", &curr->question->possible_answers->a->if_right);
-                        break;
-                    case 2:
-                        scanf("%d", &curr->question->possible_answers->b->if_right);
-                        break;
-                    case 3:
-                        scanf("%d", &curr->question->possible_answers->c->if_right);
-                        break;
-                    case 4: break;
-                        scanf("%d", &curr->question->possible_answers->d->if_right);
-                        break;
-                } 
-              //  break;*/
             case 0:
                 change = 0;
                 break;
-        }
+       }
     }
 }
 
@@ -540,36 +489,39 @@ void edit_question(char* filename, FILE* file, struct list_t* list){
 - Възможност за избор от потребителя в какъв ред и кои парчета информация иска да редактира(вместо да редактира целия въпрос)
 - Възможност за филтриране на въпросите с цел по-лесно намиране на търсения
 */
+void menu(struct list_t* list, FILE* file){
+    printf(" *** Welcome to the game 'StaniBogat' *** ");
+    puts("\n");
+    int response = 1;
 
-void fwrite_questions(struct list_t *list, char* filename)
-{
-    FILE* file = fopen(filename, "wba");
+    while (response) {
+        printf("Choose command:\n");
+        printf("\t 1 - Start game\n");
+        printf("\t 2 - Add question\n");
+        printf("\t 3 - Edit question\n");
+        printf("\t 0 - Exit\n");
 
-    if(file == NULL)
-    {
-      printf("Error");
-      return;
+        printf(">> ");
+        scanf("%d", &response);
+
+        switch(response){
+            case 0: exit(0); break;
+            case 1: start_game(); break;
+            case 2: add_question(list, file); break;
+            case 3: edit_question(list); break;
+// bravo na nas <33 mnogo lyubov macki <#3333333 istinski kotaranki, lovkam vi <333333
+        }
     }
-
-    size_t count = fwrite(&list, sizeof(struct question_t), 1, file);
-
-    if(count == 0)
-    {
-        printf("Error");
-        return;
-    }
-        
-    fclose(file);
 }
 
 int main(int argc, char** argv) 
 {
-  struct list_t question_list;
+  struct list_t question_list = {};
   //{
       /* data */
   //};
     if (argc > 1) {
-        question_list.head = fread_questions(&question_list, argv[1], 0);
+        question_list.head = fread_questions(&question_list, argv[1]);
     } else {  
         FILE* file = fopen("./out.bin", "wb");
 
