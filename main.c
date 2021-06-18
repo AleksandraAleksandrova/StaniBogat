@@ -32,7 +32,6 @@ struct node_t {
 struct list_t {
     struct node_t* head;
     struct node_t* tail;
-    int size;
 };
 
 void push_front(struct list_t* list, struct question_t* value) {
@@ -284,6 +283,7 @@ void joker(struct question_t *question){
 }
 // da se slozhi goto vmesto continue
 
+<<<<<<< HEAD
 
 void start_game(){
     //otvarq faila
@@ -296,6 +296,9 @@ void start_game(){
     //ako e greshen se vryshta v menu()
 }
  struct question_t* init_question(FILE *file){
+=======
+ struct node_t* init_question(FILE *file){
+>>>>>>> 2ee9999e13a661324f97818a21207a62b1341f7e
     
     struct question_t* new_question = malloc(sizeof(struct question_t));
 
@@ -353,7 +356,7 @@ void fwrite_questions(struct list_t *list, char* filename)
     fclose(file);
 }
 
-struct node_t *fread_questions(struct list_t* list, char* filename)//prochitame faila i vrushtame, tova koeto sme procheli
+struct list_t *fread_questions(struct list_t* list, char* filename)//prochitame faila i vrushtame, tova koeto sme procheli
 {
     FILE* file = fopen(filename, "rb");
 
@@ -361,36 +364,39 @@ struct node_t *fread_questions(struct list_t* list, char* filename)//prochitame 
     int bite_count = ftell(file);
     rewind(file);
 
-    int i = bite_count / sizeof(struct question_t);
-    struct question_t questions[i];
-    int j = 0;
-    if(i>=10)
-    {
-        fread(&questions, sizeof(struct question_t), i, file);
+    //int size_of_file = bite_count / sizeof(struct question_t);
+    int i = 0;
+    struct question_t questions[10];
+
+    while(i<10){
+        int rand_num = rand() % bite_count;
+        fseek(file, rand_num, SEEK_SET);
+        fread(&questions, (sizeof(struct question_t)), 1, file);
+        rewind(file);
     }
-    else printf("Not enough questions");
-    
+
     fclose(file);
 
-    j=0;
-    struct node_t *head; //suzdavame edin spisuk, koito shte sudurja node_t structuri i shte go vurnem
-    //edin spisuk ot question structuri
-     struct node_t *new;
-    for(j=0; j<i; j++)
-    {
-        new = malloc(sizeof(struct node_t));
-        new->question = malloc(sizeof(struct question_t));
-        memcpy(&questions[j], new->question, sizeof(struct question_t)); //kopirame pametta na question[j] vuvu ukazatelq new
-        head->next = NULL;
-        //head->prev = 
-        // da se doprenasochat ukazatelite
+    int j = 0;
+    struct list_t* list_rand_qst = malloc(sizeof(struct list_t));
 
-        if(j == 0)
-        {
-            head = new;
+    for(j=0; j<i; j++){        
+        struct node_t* new_node = malloc(sizeof(struct node_t));
+        
+        memcpy(&questions[j], new_node->question, sizeof(struct question_t)); //kopirame pametta na question[j] vuvu ukazatelq new
+        new_node->next = NULL;
+
+        if (list_rand_qst->head != NULL){
+            list_rand_qst->head->prev = new_node;
+        } else {
+            list_rand_qst->tail = new_node;
         }
-    }
-    return head;
+
+        new_node->next = list_rand_qst->head; 
+        list_rand_qst->head = new_node;
+    }   
+    
+    return list_rand_qst;
 }
 
 void print_list (struct list_t* list) {
@@ -515,16 +521,22 @@ void edit_question(struct list_t* list){
                 break;
        }
     }
+
 }
 
-/*
-Редактиране на въпрос - реализирайте възможност да се избере съществуващ въпрос и да се промени която и да е информация в него. 
-Подобно на добавянето на нов, след приключване на редакцията трябва редактираният въпрос да е достъпен за избор при начало на игри или 
-при записване във файл. По желание може да разширите работата с:
-- Възможност за избор от потребителя в какъв ред и кои парчета информация иска да редактира(вместо да редактира целия въпрос)
-- Възможност за филтриране на въпросите с цел по-лесно намиране на търсения
-*/
-void menu(struct list_t* list, FILE* file){
+void start_game(struct list_t* list, char* filename){
+    fread_questions(list, filename);
+
+    //chete 10 vyprosa
+    //slaga gi v spisyk
+    //spisyka se podrejda
+    //vseki vypros se printira s vernite otgovori
+    //proverqva se otgovora dali e veren
+    //ako e veren vzima sledvashtiq
+    //ako e greshen se vryshta v menu()
+}
+
+void menu(struct list_t* list, FILE* file, char* filename){
     printf(" *** Welcome to the game 'StaniBogat' *** ");
     puts("\n");
     int response = 1;
@@ -541,7 +553,7 @@ void menu(struct list_t* list, FILE* file){
 
         switch(response){
             case 0: exit(0); break;
-            case 1: start_game(); break;
+            case 1: start_game(list, filename); break;
             case 2: add_question(list, file); break;
             case 3: edit_question(list); break;
 // bravo na nas <33 mnogo lyubov macki <#3333333 istinski kotaranki, lovkam vi <333333
@@ -555,17 +567,15 @@ int main(int argc, char** argv)
   //{
       /* data */
   //};
+    /*
     if (argc > 1) {
-        question_list.head = fread_questions(&question_list, argv[1]);
-    } else {  
-        FILE* file = fopen("./out.bin", "wb");
+        //question_list.head = fread_questions(&question_list, argv[1]);
+    } else {  */
+    FILE* file = fopen("./out.bin", "wb");
 
-        fwrite(&question_list, sizeof(struct question_t), 0, file);
-        menu(&question_list, file);
-        fclose(file);
-    }
-      
-
-  //trqbva da osvobodim pametta
-  return 0;
+    fwrite(&question_list, sizeof(struct question_t), 0, file);
+    menu(&question_list, file, argv[1]);
+    fclose(file);      
+    //trqbva da osvobodim pametta
+    return 0;
 }
