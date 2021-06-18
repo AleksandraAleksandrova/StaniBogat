@@ -35,6 +35,41 @@ struct list_t {
     int size;
 };
 
+void push_front(struct list_t* list, struct question_t* value) {
+  struct node_t* new_node = malloc(sizeof(struct node_t));
+  new_node->question = value;
+
+  new_node->prev = NULL;
+  if(list->head != NULL) {
+    list->head->prev = new_node;
+  } else {
+    list->tail = new_node;
+  }
+  new_node->next = list->head;
+
+  list->head = new_node;
+
+  //list->size++;
+}
+
+void push_back(struct list_t* list, struct question_t* value) {
+  if(!list->head) {
+    push_front(list, value);
+    return;
+  }
+
+  struct node_t* new_node = malloc(sizeof(struct node_t));
+  new_node->question = value;
+
+  new_node->next = NULL;
+  new_node->prev = list->tail;
+
+  list->tail->next = new_node;
+  list->tail = new_node;
+
+  //list->size++;
+}
+
 void swap_nodes(struct node_t* left, struct node_t* right) {
     struct node_t* next = right->next;
 
@@ -260,43 +295,37 @@ void start_game(){
     //ako e veren vzima sledvashtiq
     //ako e greshen se vryshta v menu()
 }
- struct node_t* init_question(FILE *file){
+ struct question_t* init_question(FILE *file){
     
-    struct node_t* new_node = malloc(sizeof(struct node_t));
+    struct question_t* new_question = malloc(sizeof(struct question_t));
 
     char answer_letter = 'a';
 
     printf("Difficulty (From 1-10): \n");
-    fscanf(file, "%d", new_node->question->difficulty);
+    scanf("%d", &new_question->difficulty);
     printf("Write down your question: \n");
-    fgets(new_node->question->question_text, 100, file);
+    fgets(new_question->question_text, 100, stdin);
     
     for(int i = 0;i < 4;i++){
         
         printf("Enter answer %c: \n", answer_letter);
-        fgets(new_node->question->question_text, 30, file);
+        fgets(new_question->question_text, 30, stdin);
         printf("Is it the right answer?(1 - true ; 0 - false) \n");
-        fscanf(file, "%d", &new_node->question->answer->if_right);
+        scanf("%d", &new_question->answer->if_right);
+
         answer_letter++;
     }
-    
 
-    return new_node;
+    return new_question;
  }
 
 void add_question(struct list_t* list, FILE* file){
     
-    struct node_t* new_node;
-    
-    int num_of_questions;
-    printf("How many questions would you like to add?\n");
-    scanf("%d", &num_of_questions);
-    printf("\n");
+    struct node_t* new_question = malloc(sizeof(struct node_t));
+    new_question->question = init_question(file);
 
-    while(num_of_questions > 0){
-        new_node = init_question(file);
-        num_of_questions--;
-    }
+    push_back(list, new_question->question);
+
     
 //Възможност за избор от потребителя в какъв ред иска да въведе парчетата информация за въпроса
 
