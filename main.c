@@ -137,38 +137,105 @@ int joker_call_friend(struct question_t *question)
                 while((random = rand() % 3) != j);//teglim sluchaino chislo mejdu 0-3, no ako suvpadne s j(verniq otg) teglim pak
                 probability[k] = random; //drugite 20% poluchavat otg na sluchaen princip
               }
-            }
         }
-        else if(question->difficulty >= 4 || question->difficulty <= 6) // sredni vpr
+    }
+    else if(question->difficulty >= 4 || question->difficulty <= 6) // sredni vpr
+    {
+        for(k=0; k<100; k++)
         {
-            for(k=0; k<100; k++)
+            if(k<60)
             {
-              if(k<60)
-              {
-                   probability[k]=j;
-              }
-              else{
+               probability[k]=j;
+            }
+            else{
                 while((random = rand() % 3) != j);//teglim sluchaino chislo mejdu 0-3, no ako suvpadne s j(verniq otg) teglim pak
                 probability[k] = random; //drugite 40% poluchavat otg na sluchaen princip
               }
-            }
         }
-        else{//slojni vuprosi
-            for(k=0; k<100; k++)
+    }
+    else{//slojni vuprosi
+        for(k=0; k<100; k++)
+        {
+            if(k<30)
             {
-              if(k<30)
-              {
-                   probability[k]=j;
-              }
-              else{
+                 probability[k]=j;
+            }
+            else{
                 while((random = rand() % 3) != j);//teglim sluchaino chislo mejdu 0-3, no ako suvpadne s j(verniq otg) teglim pak
                 probability[k] = random; //drugite 70% poluchavat otg na sluchaen princip
               }
-            }
         }
-        random = rand() % 99; //teglim indeksa na nqkoi ot elementite na probability masiva; izteglqme verniq otg
-        // kolkoto poveche indeksi na verni otg, tolkva po-golqm e shansa da se iztegli verniq otg
-        return probability[random];   
+    }
+    random = rand() % 99; //teglim indeksa na nqkoi ot elementite na probability masiva; izteglqme verniq otg
+    // kolkoto poveche indeksi na verni otg, tolkva po-golqm e shansa da se iztegli verniq otg
+    return probability[random];   
+}
+
+
+int joker_audience(struct question_t *question)
+{
+    int probability[100];
+    int j=0;
+    int k; 
+    int random; 
+    int answer_audience[4];
+    int max = answer_audience[j];
+    int temp100 = 100;
+
+    for(j=0; j<3; j++)
+    {
+        answer_audience[j] = rand() % temp100;
+        if(answer_audience[j] > max)
+        {
+            max = answer_audience[j];
+        }
+        temp100 = temp100 - answer_audience[j];
+    }
+
+    if(question->difficulty <= 3)
+    {
+        for(k=0; k<100; k++)
+         {
+            if(k<80)
+            {
+                 probability[k] = max;
+            }
+            else{
+                while((random = rand() % 3) != j);
+                probability[k] = random; 
+            
+        }
+     }
+     else if(question->difficulty >= 4 || question->difficulty <= 6)
+    {
+        for(k=0; k<100; k++)
+         {
+            if(k<60)
+            {
+                 probability[k] = max;
+            }
+            else{
+                while((random = rand() % 3) != j);
+                probability[k] = random; 
+            
+        }
+     }
+     else{
+         for(k=0; k<100; k++)
+        {
+            if(k<30)
+            {
+                 probability[k]=j;
+            }
+            else{
+                while((random = rand() % 3) != j);
+                probability[k] = random; 
+              }
+        }
+     }
+        
+    random = rand() % 99; 
+    return probability[random];   
 }
 
 
