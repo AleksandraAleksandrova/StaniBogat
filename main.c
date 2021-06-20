@@ -15,7 +15,6 @@ struct answer_t{
     struct answer_t* d;
 };*/
 
-
 struct question_t {
     int difficulty;
     //struct possible_answers_t* possible_answers;
@@ -52,21 +51,19 @@ void push_front(struct list_t* list, struct question_t* value) {
 }
 
 void push_back(struct list_t* list, struct question_t* value) {
-  if(!list->head) {
-    push_front(list, value);
-    return;
-  }
+    if(!list->head) {
+        push_front(list, value);
+        return;
+    }
 
-  struct node_t* new_node = malloc(sizeof(struct node_t));
-  new_node->question = value;
+    struct node_t* new_node = malloc(sizeof(struct node_t));
+    new_node->question = value;
 
-  new_node->next = NULL;
-  new_node->prev = list->tail;
+    new_node->next = NULL;
+    new_node->prev = list->tail;
 
-  list->tail->next = new_node;
-  list->tail = new_node;
-
-  //list->size++;
+    list->tail->next = new_node;
+    list->tail = new_node;
 }
 
 void swap_nodes(struct node_t* left, struct node_t* right) {
@@ -105,7 +102,7 @@ void sort_list(struct list_t* list) {
         struct node_t* tmp = left;
         left = right;
         right = tmp;
-      }   
+      }
 
       left = left->next;
     }
@@ -127,7 +124,7 @@ int *joker_50_50(struct question_t *question)
         if(question->answer[rand_answer].if_right == 0)
         {
             wrong_answer[j]=rand_answer;
-            question->answer[rand_answer].if_removed = 1;    
+            question->answer[rand_answer].if_removed = 1;
             j++;
         }
     }
@@ -144,7 +141,7 @@ int *joker_50_50(struct question_t *question)
             result[i] = j;
             i++;
         }
-    } 
+    }
 
     return result;
 }
@@ -171,48 +168,103 @@ int joker_call_friend(struct question_t *question)
                 while((random = rand() % 3) != j);//teglim sluchaino chislo mejdu 0-3, no ako suvpadne s j(verniq otg) teglim pak
                 probability[k] = random; //drugite 20% poluchavat otg na sluchaen princip
               }
-            }
         }
-        else if(question->difficulty >= 4 || question->difficulty <= 6) // sredni vpr
+    }
+    else if(question->difficulty >= 4 || question->difficulty <= 6) // sredni vpr
+    {
+        for(k=0; k<100; k++)
         {
-            for(k=0; k<100; k++)
+            if(k<60)
             {
-              if(k<60)
-              {
-                   probability[k]=j;
-              }
-              else{
+               probability[k]=j;
+            }
+            else{
                 while((random = rand() % 3) != j);//teglim sluchaino chislo mejdu 0-3, no ako suvpadne s j(verniq otg) teglim pak
                 probability[k] = random; //drugite 40% poluchavat otg na sluchaen princip
               }
-            }
         }
-        else{//slojni vuprosi
-            for(k=0; k<100; k++)
+    }
+    else{//slojni vuprosi
+        for(k=0; k<100; k++)
+        {
+            if(k<30)
             {
-              if(k<30)
-              {
-                   probability[k]=j;
-              }
-              else{
+                 probability[k]=j;
+            }
+            else{
                 while((random = rand() % 3) != j);//teglim sluchaino chislo mejdu 0-3, no ako suvpadne s j(verniq otg) teglim pak
                 probability[k] = random; //drugite 70% poluchavat otg na sluchaen princip
               }
-            }
         }
-        random = rand() % 99; //teglim indeksa na nqkoi ot elementite na probability masiva; izteglqme verniq otg
-        // kolkoto poveche indeksi na verni otg, tolkva po-golqm e shansa da se iztegli verniq otg
-        return probability[random];   
+    }
+    random = rand() % 99; //teglim indeksa na nqkoi ot elementite na probability masiva; izteglqme verniq otg
+    // kolkoto poveche indeksi na verni otg, tolkva po-golqm e shansa da se iztegli verniq otg
+    return probability[random];
 }
 
 
+int joker_audience(struct question_t *question)
+{
+    int probability[100];
+    int j=0;
+    int k;
+    int random;
+    int answer_audience[4];
+    int max = answer_audience[j];
+    int temp100 = 100;
+
+    for(j=0; j<3; j++){
+        answer_audience[j] = rand() % temp100;
+        if(answer_audience[j] > max){
+            max = answer_audience[j];
+        }
+
+        temp100 = temp100 - answer_audience[j];
+    }
+
+    if(question->difficulty <= 3){
+        for(k=0; k<100; k++){
+            if(k<80){
+                probability[k] = max;
+            } else {
+                while((random = rand() % 3) != j){
+                    probability[k] = random;
+                }
+            }
+        }
+    }else if(question->difficulty >= 4 || question->difficulty <= 6){
+        for(k=0; k<100; k++){
+            if(k<60){
+                probability[k] = max;
+            }else{
+                while((random = rand() % 3) != j){
+                    probability[k] = random;
+                }
+            }
+        }
+     } else{
+        for(k=0; k<100; k++){
+            if(k<30){
+                probability[k]=j;
+            } else{
+                while((random = rand() % 3) != j){
+                    probability[k] = random;
+                }
+            }
+        }
+     }
+
+    random = rand() % 99;
+    return probability[random];
+}
+
 void joker(struct question_t *question){
-    
+
     printf("\t Choose your joker from 1 to 3:\n");
     printf("[1] 50-50\n");
     printf("[2] Call a friend");
     printf("[3] Audience poll\n");
-    
+
     int response = 0;
     int count = 3;
     int is_used_50_50 = 0;
@@ -221,9 +273,9 @@ void joker(struct question_t *question){
     // 0 znachi ne e izpolzwan. 1 znachi e polzvan
 
     while(count > 0){
-        printf("Enter joker number >> \n"); 
+        printf("Enter joker number >> \n");
         scanf("%d", &response);
-    
+
         switch(response){
             case 1: {
               if(is_used_50_50 == 0){
@@ -239,14 +291,14 @@ void joker(struct question_t *question){
                 break;
               }else{
                 printf("You already used this joker.\n");
-                printf("Enter valid joker number >> \n"); 
-                scanf("%d", &response);             
+                printf("Enter valid joker number >> \n");
+                scanf("%d", &response);
               }
             }
             case 2:  {
               if(is_used_friend == 0){
                 //funkcq za friend
-                int *call_friend = joker_call_friend(question);
+                int* call_friend = (int*)joker_call_friend(question);
                 for(int i=0; i<=2; i++)
                 {
                     printf("[%d] %s", call_friend[i], question->answer[call_friend[i]].answer_text);
@@ -256,7 +308,7 @@ void joker(struct question_t *question){
                 break;
               }else{
                 printf("You already used this joker. \n");
-                printf("Enter valid joker number >> \n"); 
+                printf("Enter valid joker number >> \n");
                 scanf("%d", &response);
               }
             }
@@ -267,7 +319,7 @@ void joker(struct question_t *question){
                 break;
               }else{
                 printf("You already used this joker. \n");
-                printf("Enter valid joker number >> \n"); 
+                printf("Enter valid joker number >> \n");
                 scanf("%d", &response);
               }
             }
@@ -277,29 +329,34 @@ void joker(struct question_t *question){
         printf("Do you want another joker? y/n");
         char answer;
         scanf("%c", &answer);
-        
+
         if(answer != 'y' || answer != 'Y') break;
     }
 }
 // da se slozhi goto vmesto continue
 
+<<<<<<< HEAD
  struct node_t* init_question(FILE *file){
     
+=======
+ struct question_t* init_question(FILE *file){
+
+>>>>>>> 5ba1c9869814ff569a345539299f8f347e62e018
     struct question_t* new_question = malloc(sizeof(struct question_t));
 
     char answer_letter = 'a';
 
-    printf("Difficulty (From 1-10): \n");
+    printf("Difficulty (From 1-10):\n");
     scanf("%d", &new_question->difficulty);
-    printf("Write down your question: \n");
-    fgets(new_question->question_text, 100, stdin);
-    
-    for(int i = 0;i < 4;i++){
-        
-        printf("Enter answer %c: \n", answer_letter);
-        fgets(new_question->question_text, 30, stdin);
-        printf("Is it the right answer?(1 - true ; 0 - false) \n");
-        scanf("%d", &new_question->answer->if_right);
+    printf("Write down your question:\n");
+    scanf("%s", &new_question->question_text);
+
+    for(int i = 0; i<4; i++){
+
+        printf("Enter answer %c:\n", answer_letter);
+        scanf("%s", &new_question->answer[i].answer_text);
+        printf("Is it the right answer?(1 - true ; 0 - false)\n");
+        scanf("%d", &new_question->answer[i].if_right);
 
         answer_letter++;
     }
@@ -308,16 +365,16 @@ void joker(struct question_t *question){
  }
 
 void add_question(struct list_t* list, FILE* file){
-    
+
     struct node_t* new_question = malloc(sizeof(struct node_t));
     new_question->question = init_question(file);
 
     push_back(list, new_question->question);
 
-    
 //Възможност за избор от потребителя в какъв ред иска да въведе парчетата информация за въпроса
 
     sort_list(list);
+
 }
 
 void fwrite_questions(struct list_t *list, char* filename)
@@ -337,7 +394,7 @@ void fwrite_questions(struct list_t *list, char* filename)
         printf("Error");
         return;
     }
-        
+
     fclose(file);
 }
 
@@ -365,9 +422,9 @@ struct list_t *fread_questions(struct list_t* list, char* filename)//prochitame 
     int j = 0;
     struct list_t* list_rand_qst = malloc(sizeof(struct list_t));
 
-    for(j=0; j<i; j++){        
+    for(j=0; j<i; j++){
         struct node_t* new_node = malloc(sizeof(struct node_t));
-        
+
         memcpy(&questions[j], new_node->question, sizeof(struct question_t)); //kopirame pametta na question[j] vuvu ukazatelq new
         new_node->next = NULL;
 
@@ -377,15 +434,15 @@ struct list_t *fread_questions(struct list_t* list, char* filename)//prochitame 
             list_rand_qst->tail = new_node;
         }
 
-        new_node->next = list_rand_qst->head; 
+        new_node->next = list_rand_qst->head;
         list_rand_qst->head = new_node;
-    }   
-    
+    }
+
     return list_rand_qst;
 }
 
 void print_list (struct list_t* list) {
-    
+
     struct node_t* curr = list->head;
     int counter = 1;
 
@@ -393,21 +450,22 @@ void print_list (struct list_t* list) {
         printf("[%d] %s\n", counter++, curr->question->question_text);
         curr = curr->next;
     }
-    
+
 }
 
 void edit_question(struct list_t* list){
     int question = 0;
     int answer = 1;
-    
+
     printf("Which question to edit?\n");
     print_list(list);
-    
-    puts("\n");
+
+    putc('\n');
 
     printf("Number:\n");
     printf(">> ");
     scanf("%d", &question);
+    putc('\n');
 
     struct node_t* curr = list->head;
     int counter = 1;
@@ -415,32 +473,46 @@ void edit_question(struct list_t* list){
     while(counter < question) {
         curr = curr->next;
     }
-    
+
     int change = 1;
     while (change) {
+        printf("Question - %s\n", curr->question->question_text);
+        printf("Difficulty - %d\n", curr->question->difficulty);
+        printf("Answers:\n");
+        printf("\ta) %s - %d\n", curr->question->answer[0].answer_text, curr->question->answer[0].if_right);
+        printf("\tb) %s - %d\n", curr->question->answer[1].answer_text, curr->question->answer[1].if_right);
+        printf("\tc) %s - %d\n", curr->question->answer[2].answer_text, curr->question->answer[2].if_right);
+        printf("\td) %s - %d\n", curr->question->answer[3].answer_text, curr->question->answer[3].if_right);
+        putc('\n');
+
         printf("What to change? : \n");
         printf("\t 1 - Text of the question \n");
         printf("\t 2 - Difficulty \n");
         printf("\t 3 - Answer's text \n");
         printf("\t 4 - Right answer \n");
         printf("\t 0 - Nothing \n");
-        
+
         printf(">> ");
         scanf("%d", &change);
+        putc('\n');
 
         switch(change){
             case 1:
                 printf("Enter text: \n");
                 printf(">> ");
-                fgets(curr->question->question_text, 100, stdin);
+                scanf("%s", &curr->question->question_text);
+                putc('\n');
                 break;
+
             case 2:
                 do{
                     printf("Enter difficulty: \n");
                     printf(">> ");
                     scanf("%d", &curr->question->difficulty);
-                }while(curr->question->difficulty<10 && curr->question->difficulty>0);
+                    putc('\n');
+                }while(curr->question->difficulty>10 && curr->question->difficulty<0);
                 break;
+
             case 3:
                 while (answer){
                     printf("Which answer to edit: \n");
@@ -451,28 +523,31 @@ void edit_question(struct list_t* list){
                     printf("0 - Stop\n");
                     printf(">> ");
                     scanf("%d", &answer);
+                    putc('\n');
 
                     printf("Enter text: \n");
                     printf(">> ");
                     switch(answer){
-                        case 1: 
-                            fgets(curr->question->answer[0].answer_text, 100, stdin);
+                        case 1:
+                            scanf("%s", &curr->question->answer[0].answer_text);
                             break;
                         case 2:
-                            fgets(curr->question->answer[1].answer_text, 100, stdin);
+                            scanf("%s", &curr->question->answer[1].answer_text);
                             break;
                         case 3:
-                            fgets(curr->question->answer[2].answer_text, 100, stdin);
+                            scanf("%s", &curr->question->answer[2].answer_text);
                             break;
-                        case 4: 
-                            fgets(curr->question->answer[3].answer_text, 100, stdin);
+                        case 4:
+                            scanf("%s", &curr->question->answer[3].answer_text);
                             break;
-                        case 5: 
+                        case 5:
                             answer = 0;
                             break;
                     }
-                } 
+                    putc('\n');
+                }
                 break;
+
             case 4:
                 printf("Which answer is right: \n");
                 printf("1 - a)\n");
@@ -481,44 +556,54 @@ void edit_question(struct list_t* list){
                 printf("4 - d)\n");
                 printf(">> ");
                 scanf("%d", &answer);
+                putc('\n');
 
-                curr->question->answer[0].if_right = 0;
-                curr->question->answer[1].if_right = 0;
-                curr->question->answer[2].if_right = 0;
-                curr->question->answer[3].if_right = 0;
+                for(int i=0; i<4; i++){
+                    if(i == answer - 1){
+                        curr->question->answer[i].if_right = 1;        
+                    } else {
+                        curr->question->answer[i].if_right = 0;
+                    }
+                }
+                break;
 
-                switch(answer){
-                    case 1: 
-                        scanf("%d", &curr->question->answer[0].if_right);
-                        break;
-                    case 2:
-                        scanf("%d", &curr->question->answer[1].if_right);
-                        break;
-                    case 3:
-                        scanf("%d", &curr->question->answer[2].if_right);
-                        break;
-                    case 4: break;
-                        scanf("%d", &curr->question->answer[3].if_right);
-                        break;
-                } 
             case 0:
                 change = 0;
                 break;
-       }
+        }
+        putc("\n");
+        putc("\n");
     }
-
 }
 
 void start_game(struct list_t* list, char* filename){
     fread_questions(list, filename);
-
-    //chete 10 vyprosa
-    //slaga gi v spisyk
-    //spisyka se podrejda
-    //vseki vypros se printira s vernite otgovori
-    //proverqva se otgovora dali e veren
-    //ako e veren vzima sledvashtiq
-    //ako e greshen se vryshta v menu()
+/*
+    funkciq za chetene ot fail s vryshtane na vyprosi
+    list_t vyrnat list;
+    int given_answer;
+    struct node_t* curr = malloc(sizeof(struct node_t));
+    for(curr = list head; curr->next==0; curr=curr->next){
+        printf("%s \n", curr->question->question_text)
+        for(int i=0; i<=3; i++){
+            printf("[%d]  %s \n", i+1 ,curr->question->answer[i]->answer_text);
+        }
+        printf("Please enter your answer number ot 'j' to ask for a joker.");
+        scanf("%d", &given_answer);
+        if(given_answer!='j' && given_answer!=1 && given_answer!=2 && given_answer=!='3' $$ given_answer!=4){
+            printf("Please enter valid answer. \n");
+            scanf("%d", &given_answer);
+        }
+        if(given_answer=='j') {
+            joker(curr->question);
+        }
+        if(curr->question->answer[given_answer]->if_right==0) {
+            printf ("Sorry, you lost the game. \n");
+            menu();
+        }
+        continue;
+    }
+    */
 }
 
 void menu(struct list_t* list, FILE* file, char* filename){
@@ -546,7 +631,7 @@ void menu(struct list_t* list, FILE* file, char* filename){
     }
 }
 
-int main(int argc, char** argv) 
+int main(int argc, char** argv)
 {
   struct list_t question_list = {};
   //{
@@ -560,7 +645,7 @@ int main(int argc, char** argv)
 
     fwrite(&question_list, sizeof(struct question_t), 0, file);
     menu(&question_list, file, argv[1]);
-    fclose(file);      
+    fclose(file);
     //trqbva da osvobodim pametta
     return 0;
 }
