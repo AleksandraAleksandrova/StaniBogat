@@ -197,7 +197,7 @@ int joker_call_friend(struct question_t *question)
               }
         }
     }
-    random = rand() % 99; //teglim indeksa na nqkoi ot elementite na probability masiva; izteglqme verniq otg
+    random = rand() % 100; //teglim indeksa na nqkoi ot elementite na probability masiva; izteglqme verniq otg
     // kolkoto poveche indeksi na verni otg, tolkva po-golqm e shansa da se iztegli verniq otg
     return probability[random];
 }
@@ -210,36 +210,71 @@ int joker_audience(struct question_t *question)
     int k;
     int random;
     int answer_audience[4];
-    int max = answer_audience[j];
     int temp100 = 100;
+    int i=0;
+    
+    while(question->answer[i].if_right != 1)
+    i++;
 
+    answer_audience[i]=0;
     for(j=0; j<3; j++){
-        answer_audience[j] = rand() % temp100;
-        if(answer_audience[j] > max){
-            max = answer_audience[j];
+         random = rand() % temp100;
+        if(random >= answer_audience[i]){
+            answer_audience[i] = random;
         }
-
+        answer_audience[j] = random;
         temp100 = temp100 - answer_audience[j];
     }
 
+    int sum=0;
+    for(j=0; j<3; j++)
+    {
+        sum = sum + answer_audience[j];
+    }
+    
+    int temp;
+    if((100 - sum) > answer_audience[i])//proverqvame dali 100 - sum na 3te chisla e po-golqma ot tekushtoto nai-golqmo
+    {                                     
+        if(i=3) //ako e po-golqma togava nai-golqmoto chislo stava 100 - sum, ako verniq ni otgovor e posledniq element
+        {
+            answer_audience[i] = 100 - sum;
+        }
+        else{ // razmenqme stoinosta na nai-golqmoto chislo sus (100 - sum)
+            temp = answer_audience[i]; 
+            answer_audience[i] = 100 - sum;
+            answer_audience[3] = temp; // prisvoqvame predishnoto nai-golqmo chislo
+        }
+    }
+    else {
+        if(i != 3)// ako verniq otg ne e na indeks 3 zapisvame 100 - sum
+        {
+            answer_audience[3] = 100 - sum;
+        }
+        else{// ako e na indeks 3 edno ot drugite chisla suvpada s nai-golqmoto chislo
+            j=0;
+            while(answer_audience[j] != answer_audience[i]);// ako verniq ni otgovor e na posledniq indeks
+            answer_audience[j] = 100 - sum;
+        }
+    }
+    
+    
     if(question->difficulty <= 3){
         for(k=0; k<100; k++){
             if(k<80){
-                probability[k] = max;
+                probability[k] = answer_audience[i];
             } else {
-                while((random = rand() % 3) != j){
-                    probability[k] = random;
-                }
+                while ((random = rand() % 4) == i);
+                probability[k] = answer_audience[random];
+                
             }
         }
     }else if(question->difficulty >= 4 || question->difficulty <= 6){
         for(k=0; k<100; k++){
             if(k<60){
-                probability[k] = max;
+                probability[k] = answer_audience[i]);
             }else{
-                while((random = rand() % 3) != j){
-                    probability[k] = random;
-                }
+                while ((random = rand() % 4) == i);
+                probability[k] = answer_audience[random];
             }
         }
      } else{
@@ -247,14 +282,13 @@ int joker_audience(struct question_t *question)
             if(k<30){
                 probability[k]=j;
             } else{
-                while((random = rand() % 3) != j){
-                    probability[k] = random;
-                }
+                while ((random = rand() % 4) == i);
+                probability[k] = answer_audience[random];
             }
         }
      }
 
-    random = rand() % 99;
+    random = rand() % 100;
     return probability[random];
 }
 
@@ -298,12 +332,8 @@ void joker(struct question_t *question){
             case 2:  {
               if(is_used_friend == 0){
                 //funkcq za friend
-                int* call_friend = (int*)joker_call_friend(question);
-                for(int i=0; i<=2; i++)
-                {
-                    printf("[%d] %s", call_friend[i], question->answer[call_friend[i]].answer_text);
-                }
-                free(call_friend);
+                int call_friend = joker_call_friend(question);
+                printf("[%d] %s", call_friend, question->answer[call_friend].answer_text);
                 is_used_friend = 1;
                 break;
               }else{
@@ -315,6 +345,8 @@ void joker(struct question_t *question){
             case 3:  {
               if(is_used_audience == 0){
                 //funkciq za audience;
+                 int audience = joker_audience(question);
+                printf("[%d] %s", audience, question->answer[audience].answer_text);
                 is_used_audience = 1;
                 break;
               }else{
@@ -402,20 +434,15 @@ struct list_t *fread_questions(struct list_t* list, char* filename)//prochitame 
 {
     FILE* file = fopen(filename, "rb");
 
-    fseek(file, 0, SEEK_END);
+    /*fseek(file, 0, SEEK_END);
     int bite_count = ftell(file);
-    rewind(file);
+    rewind(file);*/
 
     //int size_of_file = bite_count / sizeof(struct question_t);
     int i = 0;
     struct question_t questions[10];
 
-    while(i<10){
-        int rand_num = rand() % bite_count;
-        fseek(file, rand_num, SEEK_SET);
-        fread(&questions, (sizeof(struct question_t)), 1, file);
-        rewind(file);
-    }
+    fread(&questions, (sizeof(struct question_t)), 10, file);
 
     fclose(file);
 
@@ -424,8 +451,9 @@ struct list_t *fread_questions(struct list_t* list, char* filename)//prochitame 
 
     for(j=0; j<i; j++){
         struct node_t* new_node = malloc(sizeof(struct node_t));
-
-        memcpy(&questions[j], new_node->question, sizeof(struct question_t)); //kopirame pametta na question[j] vuvu ukazatelq new
+        new_node->question = malloc(sizeof(struct question_t));
+        
+        memcpy(&questions[j], new_node->question, sizeof(struct question_t)); //kopirame pametta na questions[j] vuvu ukazatelq new
         new_node->next = NULL;
 
         if (list_rand_qst->head != NULL){
