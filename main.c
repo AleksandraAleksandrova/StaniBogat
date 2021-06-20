@@ -443,6 +443,7 @@ void edit_question(struct list_t* list){
 
     while(counter < question) {
         curr = curr->next;
+        counter++;
     }
 
     int change = 1;
