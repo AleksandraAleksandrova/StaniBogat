@@ -455,12 +455,12 @@ void edit_question(struct list_t* list){
     printf("Which question to edit?\n");
     print_list(list);
 
-    puts("\n");
+    putc('\n');
 
     printf("Number:\n");
     printf(">> ");
     scanf("%d", &question);
-    puts("\n");
+    putc('\n');
 
     struct node_t* curr = list->head;
     int counter = 1;
@@ -471,14 +471,14 @@ void edit_question(struct list_t* list){
 
     int change = 1;
     while (change) {
-        printf("\nQuestion - %s\n", curr->question->question_text);
+        printf("Question - %s\n", curr->question->question_text);
         printf("Difficulty - %d\n", curr->question->difficulty);
         printf("Answers:\n");
         printf("\ta) %s - %d\n", curr->question->answer[0].answer_text, curr->question->answer[0].if_right);
         printf("\tb) %s - %d\n", curr->question->answer[1].answer_text, curr->question->answer[1].if_right);
         printf("\tc) %s - %d\n", curr->question->answer[2].answer_text, curr->question->answer[2].if_right);
         printf("\td) %s - %d\n", curr->question->answer[3].answer_text, curr->question->answer[3].if_right);
-        puts("\n");
+        putc('\n');
 
         printf("What to change? : \n");
         printf("\t 1 - Text of the question \n");
@@ -489,20 +489,25 @@ void edit_question(struct list_t* list){
 
         printf(">> ");
         scanf("%d", &change);
+        putc('\n');
 
         switch(change){
             case 1:
                 printf("Enter text: \n");
                 printf(">> ");
                 scanf("%s", &curr->question->question_text);
+                putc('\n');
                 break;
+
             case 2:
                 do{
                     printf("Enter difficulty: \n");
                     printf(">> ");
                     scanf("%d", &curr->question->difficulty);
+                    putc('\n');
                 }while(curr->question->difficulty>10 && curr->question->difficulty<0);
                 break;
+
             case 3:
                 while (answer){
                     printf("Which answer to edit: \n");
@@ -513,6 +518,7 @@ void edit_question(struct list_t* list){
                     printf("0 - Stop\n");
                     printf(">> ");
                     scanf("%d", &answer);
+                    putc('\n');
 
                     printf("Enter text: \n");
                     printf(">> ");
@@ -533,8 +539,10 @@ void edit_question(struct list_t* list){
                             answer = 0;
                             break;
                     }
+                    putc('\n');
                 }
                 break;
+
             case 4:
                 printf("Which answer is right: \n");
                 printf("1 - a)\n");
@@ -543,30 +551,23 @@ void edit_question(struct list_t* list){
                 printf("4 - d)\n");
                 printf(">> ");
                 scanf("%d", &answer);
+                putc('\n');
 
-                curr->question->answer[0].if_right = 0;
-                curr->question->answer[1].if_right = 0;
-                curr->question->answer[2].if_right = 0;
-                curr->question->answer[3].if_right = 0;
-
-                switch(answer){
-                    case 1:
-                        scanf("%d", &curr->question->answer[0].if_right);
-                        break;
-                    case 2:
-                        scanf("%d", &curr->question->answer[1].if_right);
-                        break;
-                    case 3:
-                        scanf("%d", &curr->question->answer[2].if_right);
-                        break;
-                    case 4: break;
-                        scanf("%d", &curr->question->answer[3].if_right);
-                        break;
+                for(int i=0; i<4; i++){
+                    if(i == answer - 1){
+                        curr->question->answer[i].if_right = 1;        
+                    } else {
+                        curr->question->answer[i].if_right = 0;
+                    }
                 }
+                break;
+
             case 0:
                 change = 0;
                 break;
-       }
+        }
+        putc("\n");
+        putc("\n");
     }
 }
 
