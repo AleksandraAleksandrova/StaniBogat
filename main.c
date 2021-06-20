@@ -118,10 +118,10 @@ int *joker_50_50(struct question_t *question)
 {
     int wrong_answer[2];
     int rand_answer;
-    int j=0;
+    int j = 0;
 
     //namirame 2 greshni otgovora i zapisvame tehnite indeksi v wrong_answer[]
-    while(j<2)
+    while(j < 2)
     {
         rand_answer = rand() % 3;
         if(question->answer[rand_answer].if_right == 0)
@@ -135,9 +135,9 @@ int *joker_50_50(struct question_t *question)
     //alokirame pamet ot 2*int, koqto shte vurnem kato resultat ot funkciqta. V tazi pamet shte zapishem ind.
     //na ostanalite dva otgovora
     int *result = malloc(2*sizeof(int));
-    int i=0;
+    int i = 0;
     //proverqvame dali indeksa(j) e v wrong_answer, ako ne e go zapisvame v result
-    for(j=0; j<4; j++)
+    for(j = 0; j < 4; j++)
     {
         if(wrong_answer[0] != j && wrong_answer[1] != j)
         {
@@ -283,22 +283,7 @@ void joker(struct question_t *question){
 }
 // da se slozhi goto vmesto continue
 
-<<<<<<< HEAD
-
-void start_game(){
-    //otvarq faila
-    //chete 10 vyprosa
-    //slaga gi v spisyk
-    //spisyka se podrejda
-    //vseki vypros se printira s vernite otgovori
-    //proverqva se otgovora dali e veren
-    //ako e veren vzima sledvashtiq
-    //ako e greshen se vryshta v menu()
-}
- struct question_t* init_question(FILE *file){
-=======
  struct node_t* init_question(FILE *file){
->>>>>>> 2ee9999e13a661324f97818a21207a62b1341f7e
     
     struct question_t* new_question = malloc(sizeof(struct question_t));
 
