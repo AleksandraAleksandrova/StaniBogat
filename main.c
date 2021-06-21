@@ -617,9 +617,10 @@ int main(int argc, char** argv)
         //question_list.head = fread_questions(&question_list, argv[1]);
     } else {  */
     FILE* file = fopen("./out.bin", "wb");
-
-    fwrite(&question_list, sizeof(struct question_t), 0, file);
+    
     menu(&question_list, file, argv[1]);
+    fwrite(&question_list, sizeof(struct question_t), 0, file);
+    
     fclose(file);
     //trqbva da osvobodim pametta
     return 0;
