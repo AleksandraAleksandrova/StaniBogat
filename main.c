@@ -357,7 +357,7 @@ void joker(struct question_t *question, int *joker_flag_50_50, int *joker_flag_f
         }
 }
 
- struct question_t* init_question(FILE *file){
+struct question_t* init_question(FILE *file){
     
     struct question_t* new_question = malloc(sizeof(struct question_t));
 
@@ -421,6 +421,8 @@ struct list_t *fread_questions(struct list_t* list, char* filename)//prochitame 
         push_back(list,new_question);
 
     }
+
+    //return list;
 
 }
 
@@ -572,6 +574,7 @@ void start_game(struct list_t* list, char* filename){
 
     struct list_t* list_of_questions;
     fread_questions(list_of_questions, "out.bin");
+    // mai ne se chetat vyprosite kakto trqbva
 
     int given_answer;
     int joker_info_50_50 = 0;
