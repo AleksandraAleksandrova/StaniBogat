@@ -8,7 +8,6 @@ struct answer_t{
     int if_removed;
 };
 
-
 struct question_t {
     int difficulty;
     char question_text[100];
@@ -218,7 +217,6 @@ int joker_call_friend(struct question_t *question)
     return probability[random];
 }
 
-
 int joker_audience(struct question_t *question)
 {
     int probability[100];
@@ -400,8 +398,6 @@ void add_question(struct list_t* list, FILE* file){
 
 }
 
-
-
 struct list_t *fread_questions(struct list_t* list, char* filename)//prochitame faila i vrushtame, tova koeto sme procheli
 {
     FILE* file = fopen(filename, "rb");
@@ -573,36 +569,39 @@ void edit_question(struct list_t* list){
 }
 
 void start_game(struct list_t* list, char* filename){
-    fread_questions(list, filename);
-/*
-    funkciq za chetene ot fail s vryshtane na vyprosi
-    list_t vyrnat list;
+
+    struct list_t* list_of_questions;
+    fread_questions(list_of_questions, "out.bin");
+
     int given_answer;
     int joker_info_50_50 = 0;
-    int joker_info_friend = 0;          //watches if this joker is used
+    int joker_info_friend = 0;  
     int joker_info_audience = 0;
-    struct node_t* curr = malloc(sizeof(struct node_t));
-    for(curr = list head; curr->next==0; curr=curr->next){
-        printf("%s \n", curr->question->question_text)
+
+    struct node_t* curr;
+
+    for(curr = list_of_questions->head; curr!=0; curr=curr->next){
+        printf("%s \n", curr->question->question_text);
         for(int i=0; i<=3; i++){
-            printf("[%d]  %s \n", i+1 ,curr->question->answer[i]->answer_text);
+            printf("[%d]  %s \n", i+1 ,curr->question->answer[i].answer_text);
         }
         printf("Please enter your answer number ot 'j' to ask for a joker.");
         scanf("%d", &given_answer);
-        if(given_answer!='j' && given_answer!=1 && given_answer!=2 && given_answer=!='3' $$ given_answer!=4){
+        if(given_answer!='j' && given_answer!=1 && given_answer!=2 && given_answer!='3' && given_answer!=4){
             printf("Please enter valid answer. \n");
             scanf("%d", &given_answer);
         }
         if(given_answer=='j') {
             joker(curr->question, &joker_info_50_50, &joker_info_audience, &joker_info_friend);
         }
-        if(curr->question->answer[given_answer]->if_right==0) {
+        if(curr->question->answer[given_answer].if_right==0) {
             printf ("Sorry, you lost the game. \n");
-            menu();
+            //menu();
+            //druga prepratka za menuto
         }
         continue;
     }
-    */
+    
 }
 
 void menu(struct list_t* list, FILE* file, char* filename){
@@ -629,6 +628,7 @@ void menu(struct list_t* list, FILE* file, char* filename){
         }
     }
 }
+
 
 int main(int argc, char** argv)
 {
