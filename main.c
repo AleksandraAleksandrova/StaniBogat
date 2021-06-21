@@ -310,7 +310,7 @@ void joker(struct question_t *question, int *joker_flag_50_50, int *joker_flag_f
 
     printf("\t Choose your joker from 1 to 3:\n");
     printf("[1] 50-50\n");
-    printf("[2] Call a friend");
+    printf("[2] Call a friend\n");
     printf("[3] Audience poll\n");
 
     int response = 0;
@@ -585,10 +585,11 @@ void start_game(struct list_t* list, char* filename){
         for(int i=0; i<=3; i++){
             printf("[%d]  %s \n", i+1 ,curr->question->answer[i].answer_text);
         }
-        printf("Please enter your answer number ot 'j' to ask for a joker.");
+        printf("Please enter your answer number or 'j' to ask for a joker.");
         scanf("%d", &given_answer);
-        if(given_answer!='j' && given_answer!=1 && given_answer!=2 && given_answer!='3' && given_answer!=4){
+        if(given_answer!='j' && given_answer!=1 && given_answer!=2 && given_answer!=3 && given_answer!=4){
             printf("Please enter valid answer. \n");
+            printf(">>");
             scanf("%d", &given_answer);
         }
         if(given_answer=='j') {
@@ -596,10 +597,8 @@ void start_game(struct list_t* list, char* filename){
         }
         if(curr->question->answer[given_answer].if_right==0) {
             printf ("Sorry, you lost the game. \n");
-            //menu();
-            //druga prepratka za menuto
+            break; // za da prikluchi start_game() i da se vyrne v menu()
         }
-        continue;
     }
     
 }
@@ -628,7 +627,6 @@ void menu(struct list_t* list, FILE* file, char* filename){
         }
     }
 }
-
 
 int main(int argc, char** argv)
 {
