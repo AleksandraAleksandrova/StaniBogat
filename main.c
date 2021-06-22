@@ -102,6 +102,7 @@ void sort_list(struct list_t* list) {
   }
 
 }
+
 void fwrite_questions(struct list_t *list, char* filename)
 {
     FILE* file = fopen(filename, "wba");
@@ -126,6 +127,7 @@ void fwrite_questions(struct list_t *list, char* filename)
    
 
 }
+
 int *joker_50_50(struct question_t *question)
 {
     int wrong_answer[2];
@@ -412,18 +414,36 @@ struct list_t *fread_questions(struct list_t* list, char* filename)//prochitame 
     long sz = ftell(file);
     fseek(file, 0L, SEEK_SET);
     long count_of_questions = sz / sizeof(struct question_t);
-    list->head=NULL;
 
-    for (int i=0; i<count_of_questions; i++)
-    {
+    for (int i=0; i < count_of_questions; i++){
         struct question_t* new_question = malloc(sizeof(struct question_t));
         fread(new_question, sizeof(struct question_t), 1, file);
-        push_back(list,new_question);
-
+        push_back(list, new_question);
     }
 
-    //return list;
+    sort_list(list);
+    struct node_t* node = list->head;
+    struct list_t* random_questions = malloc(sizeof(struct list_t));
+    
+    for (int j=1; j<=10; j++){
+        int count = 0;
+        
+        while(node->question->difficulty == j){
+            count++;
+            node = node->next;
+        }
 
+        int rdm = rand() % count;
+
+        while(rdm!=count){
+            count--;
+            node = node->prev;
+        }
+
+        push_back(random_questions, node->question);
+    }
+
+    return random_questions;
 }
 
 void print_list (struct list_t* list) {
@@ -438,7 +458,7 @@ void print_list (struct list_t* list) {
 
 }
 
-void edit_question(struct list_t* list){
+void edit_question(struct list_t* list, char* filename){
     int question = 0;
     int answer = 1;
 
@@ -567,14 +587,14 @@ void edit_question(struct list_t* list){
         putchar('\n');
         putchar('\n');
     }
-    fwrite_questions(list,"out.bin");
+    
+    fwrite_questions(list, filename);
 }
 
 void start_game(struct list_t* list, char* filename){
 
     struct list_t* list_of_questions;
-    fread_questions(list_of_questions, "out.bin");
-    // mai ne se chetat vyprosite kakto trqbva
+    list_of_questions = fread_questions(list, filename);
 
     int given_answer;
     int joker_info_50_50 = 0;
@@ -625,7 +645,7 @@ void menu(struct list_t* list, FILE* file, char* filename){
             case 0: exit(0); break;
             case 1: start_game(list, filename); break;
             case 2: add_question(list, file); break;
-            case 3: edit_question(list); break;
+            case 3: edit_question(list, filename); break;
 
         }
     }
@@ -633,14 +653,7 @@ void menu(struct list_t* list, FILE* file, char* filename){
 
 int main(int argc, char** argv)
 {
-  struct list_t question_list = {};
-  //{
-      /* data */
-  //};
-    /*
-    if (argc > 1) {
-        //question_list.head = fread_questions(&question_list, argv[1]);
-    } else {  */
+    struct list_t question_list = {};
     FILE* file = fopen("./out.bin", "wb");
     
     menu(&question_list, file, argv[1]);
