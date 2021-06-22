@@ -400,7 +400,7 @@ void add_question(struct list_t* list, FILE* file){
 
 }
 
-struct list_t *fread_questions(struct list_t* list, char* filename)//prochitame faila i vrushtame, tova koeto sme procheli
+struct list_t *fread_questions(struct list_t* list, char* filename)
 {
     FILE* file = fopen(filename, "rb");
 
@@ -424,19 +424,20 @@ struct list_t *fread_questions(struct list_t* list, char* filename)//prochitame 
     sort_list(list);
     struct node_t* node = list->head;
     struct list_t* random_questions = malloc(sizeof(struct list_t));
+    struct node_t* curr;
     
     for (int j=1; j<=10; j++){
         int count = 0;
-        
+        node = curr;
         while(node->question->difficulty == j){
-            count++;
+            count++; // 4
             node = node->next;
         }
+        curr = node;
 
-        int rdm = rand() % count;
+        int rdm = rand() % count;  // 2 
 
         while(rdm!=count){
-            count--;
             node = node->prev;
         }
 
