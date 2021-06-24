@@ -443,7 +443,8 @@ void print_list (struct list_t* list) {
 void edit_question(struct list_t* list){
     int question = 0;
     int answer = 1;
-
+    char *get_buffer_space;
+    
     printf("Which question to edit?\n");
     print_list(list);
 
@@ -452,7 +453,9 @@ void edit_question(struct list_t* list){
     printf("Number:\n");
     printf(">> ");
     scanf("%d", &question);
-    putchar('\n');
+    fgets(get_buffer_space, 10, stdin);
+
+    //putchar('\n');
 
     struct node_t* curr = list->head;
     int counter = 1;
@@ -484,7 +487,6 @@ void edit_question(struct list_t* list){
         scanf("%d", &change);
         putchar('\n');
 
-        char *get_buffer_space;
         switch(change){
             case 1:
                 printf("Enter text: \n");
