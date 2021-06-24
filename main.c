@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
+#include <time.h>
 struct answer_t{
     int if_right;
     char answer_text[100];
@@ -130,14 +130,19 @@ void fwrite_questions(struct list_t *list, char* filename)
 
 int *joker_50_50(struct question_t *question)
 {
+    srand(time(0));
     int wrong_answer[2];
     int rand_answer;
     int j = 0;
-
     //namirame 2 greshni otgovora i zapisvame tehnite indeksi v wrong_answer[]
     while(j < 2)
     {
         rand_answer = rand() % 3;
+        if(j == 1){
+            if(wrong_answer[j - 1] == wrong_answer[j]){
+                continue;
+            }
+        }
         if(question->answer[rand_answer].if_right == 0)
         {
             wrong_answer[j]=rand_answer;
@@ -333,7 +338,7 @@ void joker(struct question_t *question, int *joker_flag_50_50, int *joker_flag_f
             //funkciq za joker 50/50
             //masiv ot 2*int res50_50
             int *res50_50 = joker_50_50(question);
-            for(int i=0; i<=2; i++)
+            for(int i=0; i<2; i++)
             {
                 printf("[%d] %s", res50_50[i], question->answer[res50_50[i]].answer_text);
             }
@@ -656,6 +661,7 @@ void menu(struct list_t* list, FILE* file, char* filename){
 
 int main(int argc, char** argv)
 {
+
     struct list_t question_list = {};
     FILE* file = fopen("./out.bin", "wb");
     
