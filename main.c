@@ -358,7 +358,7 @@ void joker(struct question_t *question, int *joker_flag_50_50, int *joker_flag_f
             case 3:  {
                 //funkciq za audience;
                 int audience = joker_audience(question);
-                printf("[%d] %s", audience, question->answer[audience].answer_text);
+                printf("[%d percents] %s", audience, question->answer[audience].answer_text);
                 *joker_flag_audience = 3;
                 break;
             
