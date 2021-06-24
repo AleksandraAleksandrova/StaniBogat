@@ -170,6 +170,7 @@ int *joker_50_50(struct question_t *question)
 
 int joker_call_friend(struct question_t *question)
 {
+    srand(time(0));
     int probability[100];
     int j=0;// verniq otgovor
     int k; // broqch za inicializirane na probability masiva
@@ -187,7 +188,9 @@ int joker_call_friend(struct question_t *question)
                  probability[k]=j;
             }
             else{
-                while((random = rand() % 3) != j);//teglim sluchaino chislo mejdu 0-3, no ako suvpadne s j(verniq otg) teglim pak
+                while((random = rand() % 3) == j){
+                    random = rand() % 3;
+                }//teglim sluchaino chislo mejdu 0-3, no ako suvpadne s j(verniq otg) teglim pak
                 probability[k] = random; //drugite 20% poluchavat otg na sluchaen princip
               }
         }
@@ -201,7 +204,9 @@ int joker_call_friend(struct question_t *question)
                probability[k]=j;
             }
             else{
-                while((random = rand() % 3) != j);//teglim sluchaino chislo mejdu 0-3, no ako suvpadne s j(verniq otg) teglim pak
+                while((random = rand() % 3) == j){
+                    random = rand() % 3;    
+                }//teglim sluchaino chislo mejdu 0-3, no ako suvpadne s j(verniq otg) teglim pak
                 probability[k] = random; //drugite 40% poluchavat otg na sluchaen princip
               }
         }
@@ -214,12 +219,14 @@ int joker_call_friend(struct question_t *question)
                  probability[k]=j;
             }
             else{
-                while((random = rand() % 3) != j);//teglim sluchaino chislo mejdu 0-3, no ako suvpadne s j(verniq otg) teglim pak
+                while((random = rand() % 3) == j){
+                    random = rand() % 3;
+                }//teglim sluchaino chislo mejdu 0-3, no ako suvpadne s j(verniq otg) teglim pak
                 probability[k] = random; //drugite 70% poluchavat otg na sluchaen princip
               }
         }
     }
-    random = rand() % 100; //teglim indeksa na nqkoi ot elementite na probability masiva; izteglqme verniq otg
+    random = rand() % 99; //teglim indeksa na nqkoi ot elementite na probability masiva; izteglqme verniq otg
     // kolkoto poveche indeksi na verni otg, tolkva po-golqm e shansa da se iztegli verniq otg
     return probability[random];
 }
