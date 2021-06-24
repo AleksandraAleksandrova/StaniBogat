@@ -105,13 +105,7 @@ void sort_list(struct list_t* list) {
 
 void fwrite_questions(struct list_t *list, char* filename)
 {
-    FILE* file = fopen(filename, "wba");
-
-    if(file == NULL)
-    {
-      printf("Error");
-      return;
-    }
+    FILE* file = fopen(filename, "ab");
 
     struct node_t* temp = list->head;
 
@@ -195,7 +189,7 @@ int joker_call_friend(struct question_t *question)
               }
         }
     }
-    else if(question->difficulty >= 4 || question->difficulty <= 6) // sredni vpr
+    else if(question->difficulty >= 4 && question->difficulty <= 6) // sredni vpr
     {
         for(k=0; k<100; k++)
         {
@@ -233,6 +227,7 @@ int joker_call_friend(struct question_t *question)
 
 int joker_audience(struct question_t *question)
 {
+    srand(time(0));
     int probability[100];
     int j=0;
     int k;
@@ -362,7 +357,7 @@ void joker(struct question_t *question, int *joker_flag_50_50, int *joker_flag_f
             }
             case 3:  {
                 //funkciq za audience;
-                 int audience = joker_audience(question);
+                int audience = joker_audience(question);
                 printf("[%d] %s", audience, question->answer[audience].answer_text);
                 *joker_flag_audience = 3;
                 break;
@@ -405,7 +400,6 @@ void add_question(struct list_t* list, FILE* file){
 
     push_back(list, new_question->question);
 
-//Възможност за избор от потребителя в какъв ред иска да въведе парчетата информация за въпроса
 
     sort_list(list);
     fwrite_questions(list,"out.bin");
@@ -414,6 +408,7 @@ void add_question(struct list_t* list, FILE* file){
 
 struct list_t *fread_questions(struct list_t* list, char* filename)
 {
+    srand(time(0));
     FILE* file = fopen(filename, "rb");
 
     if(file == NULL)
@@ -618,7 +613,7 @@ void start_game(struct list_t* list, char* filename){
 
     struct node_t* curr;
 
-    for(curr = list_of_questions->head; curr!=0; curr=curr->next){
+    for(curr = list_of_questions->head; curr!=NULL; curr=curr->next){
         printf("%s \n", curr->question->question_text);
         for(int i=0; i<=3; i++){
             printf("[%d]  %s \n", i+1 ,curr->question->answer[i].answer_text);
@@ -632,6 +627,8 @@ void start_game(struct list_t* list, char* filename){
         }
         if(given_answer=='j') {
             joker(curr->question, &joker_info_50_50, &joker_info_audience, &joker_info_friend);
+            printf("Please enter your answer: \n");
+            scanf("%d", &given_answer);
         }
         if(curr->question->answer[given_answer].if_right==0) {
             printf ("Sorry, you lost the game. \n");
@@ -657,7 +654,7 @@ void menu(struct list_t* list, FILE* file, char* filename){
         scanf("%d", &response);
 
         switch(response){
-            case 0: exit(0); break;
+            case 0: fclose(file); exit(0); break;
             case 1: start_game(list, filename); break;
             case 2: add_question(list, file); break;
             case 3: edit_question(list, filename); break;
@@ -676,6 +673,5 @@ int main(int argc, char** argv)
     fwrite(&question_list, sizeof(struct question_t), 0, file);
     
     fclose(file);
-    //trqbva da osvobodim pametta
     return 0;
 }
