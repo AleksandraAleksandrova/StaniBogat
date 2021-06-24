@@ -8,7 +8,6 @@ struct answer_t{
     int if_removed;
 };
 
-
 struct question_t {
     int difficulty;
     char question_text[100];
@@ -103,6 +102,7 @@ void sort_list(struct list_t* list) {
   }
 
 }
+
 void fwrite_questions(struct list_t *list, char* filename)
 {
     FILE* file = fopen(filename, "wba");
@@ -127,6 +127,7 @@ void fwrite_questions(struct list_t *list, char* filename)
    
 
 }
+
 int *joker_50_50(struct question_t *question)
 {
     int wrong_answer[2];
@@ -217,7 +218,6 @@ int joker_call_friend(struct question_t *question)
     // kolkoto poveche indeksi na verni otg, tolkva po-golqm e shansa da se iztegli verniq otg
     return probability[random];
 }
-
 
 int joker_audience(struct question_t *question)
 {
@@ -312,7 +312,7 @@ void joker(struct question_t *question, int *joker_flag_50_50, int *joker_flag_f
 
     printf("\t Choose your joker from 1 to 3:\n");
     printf("[1] 50-50\n");
-    printf("[2] Call a friend");
+    printf("[2] Call a friend\n");
     printf("[3] Audience poll\n");
 
     int response = 0;
@@ -359,7 +359,7 @@ void joker(struct question_t *question, int *joker_flag_50_50, int *joker_flag_f
         }
 }
 
- struct question_t* init_question(FILE *file){
+struct question_t* init_question(FILE *file){
     
     struct question_t* new_question = malloc(sizeof(struct question_t));
 
@@ -400,9 +400,7 @@ void add_question(struct list_t* list, FILE* file){
 
 }
 
-
-
-struct list_t *fread_questions(struct list_t* list, char* filename)//prochitame faila i vrushtame, tova koeto sme procheli
+struct list_t *fread_questions(struct list_t* list, char* filename)
 {
     FILE* file = fopen(filename, "rb");
 
@@ -416,16 +414,37 @@ struct list_t *fread_questions(struct list_t* list, char* filename)//prochitame 
     long sz = ftell(file);
     fseek(file, 0L, SEEK_SET);
     long count_of_questions = sz / sizeof(struct question_t);
-    list->head=NULL;
 
-    for (int i=0; i<count_of_questions; i++)
-    {
+    for (int i=0; i < count_of_questions; i++){
         struct question_t* new_question = malloc(sizeof(struct question_t));
         fread(new_question, sizeof(struct question_t), 1, file);
-        push_back(list,new_question);
-
+        push_back(list, new_question);
     }
 
+    sort_list(list);
+    struct node_t* node = list->head;
+    struct list_t* random_questions = malloc(sizeof(struct list_t));
+    struct node_t* curr;
+    
+    for (int j=1; j<=10; j++){
+        int count = 0;
+        node = curr;
+        while(node->question->difficulty == j){
+            count++; // 4
+            node = node->next;
+        }
+        curr = node;
+
+        int rdm = rand() % count;  // 2 
+
+        while(rdm!=count){
+            node = node->prev;
+        }
+
+        push_back(random_questions, node->question);
+    }
+
+    return random_questions;
 }
 
 void print_list (struct list_t* list) {
@@ -440,7 +459,7 @@ void print_list (struct list_t* list) {
 
 }
 
-void edit_question(struct list_t* list){
+void edit_question(struct list_t* list, char* filename){
     int question = 0;
     int answer = 1;
     char *get_buffer_space;
@@ -571,40 +590,43 @@ void edit_question(struct list_t* list){
         putchar('\n');
         putchar('\n');
     }
-    fwrite_questions(list,"out.bin");
+    
+    fwrite_questions(list, filename);
 }
 
 void start_game(struct list_t* list, char* filename){
-    fread_questions(list, filename);
-/*
-    funkciq za chetene ot fail s vryshtane na vyprosi
-    list_t vyrnat list;
+
+    struct list_t* list_of_questions;
+    list_of_questions = fread_questions(list, filename);
+
     int given_answer;
     int joker_info_50_50 = 0;
-    int joker_info_friend = 0;          //watches if this joker is used
+    int joker_info_friend = 0;  
     int joker_info_audience = 0;
-    struct node_t* curr = malloc(sizeof(struct node_t));
-    for(curr = list head; curr->next==0; curr=curr->next){
-        printf("%s \n", curr->question->question_text)
+
+    struct node_t* curr;
+
+    for(curr = list_of_questions->head; curr!=0; curr=curr->next){
+        printf("%s \n", curr->question->question_text);
         for(int i=0; i<=3; i++){
-            printf("[%d]  %s \n", i+1 ,curr->question->answer[i]->answer_text);
+            printf("[%d]  %s \n", i+1 ,curr->question->answer[i].answer_text);
         }
-        printf("Please enter your answer number ot 'j' to ask for a joker.");
+        printf("Please enter your answer number or 'j' to ask for a joker.");
         scanf("%d", &given_answer);
-        if(given_answer!='j' && given_answer!=1 && given_answer!=2 && given_answer=!='3' $$ given_answer!=4){
+        if(given_answer!='j' && given_answer!=1 && given_answer!=2 && given_answer!=3 && given_answer!=4){
             printf("Please enter valid answer. \n");
+            printf(">>");
             scanf("%d", &given_answer);
         }
         if(given_answer=='j') {
             joker(curr->question, &joker_info_50_50, &joker_info_audience, &joker_info_friend);
         }
-        if(curr->question->answer[given_answer]->if_right==0) {
+        if(curr->question->answer[given_answer].if_right==0) {
             printf ("Sorry, you lost the game. \n");
-            menu();
+            break; // za da prikluchi start_game() i da se vyrne v menu()
         }
-        continue;
     }
-    */
+    
 }
 
 void menu(struct list_t* list, FILE* file, char* filename){
@@ -626,7 +648,7 @@ void menu(struct list_t* list, FILE* file, char* filename){
             case 0: exit(0); break;
             case 1: start_game(list, filename); break;
             case 2: add_question(list, file); break;
-            case 3: edit_question(list); break;
+            case 3: edit_question(list, filename); break;
 
         }
     }
@@ -634,14 +656,7 @@ void menu(struct list_t* list, FILE* file, char* filename){
 
 int main(int argc, char** argv)
 {
-  struct list_t question_list = {};
-  //{
-      /* data */
-  //};
-    /*
-    if (argc > 1) {
-        //question_list.head = fread_questions(&question_list, argv[1]);
-    } else {  */
+    struct list_t question_list = {};
     FILE* file = fopen("./out.bin", "wb");
     
     menu(&question_list, file, argv[1]);
