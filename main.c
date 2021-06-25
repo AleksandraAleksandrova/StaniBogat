@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+
 struct answer_t{
     int if_right;
     char answer_text[100];
@@ -26,20 +27,19 @@ struct list_t {
 };
 
 void push_front(struct list_t* list, struct question_t* value) {
-  struct node_t* new_node = malloc(sizeof(struct node_t));
-  new_node->question = value;
+    struct node_t* new_node = malloc(sizeof(struct node_t));
+    new_node->question = value;
 
-  new_node->prev = NULL;
-  if(list->head != NULL) {
-    list->head->prev = new_node;
-  } else {
-    list->tail = new_node;
-  }
-  new_node->next = list->head;
+    new_node->prev = NULL;
+    if(list->head != NULL) {
+        list->head->prev = new_node;
+    } else {
+        list->tail = new_node;
+    }
+    new_node->next = list->head;
 
-  list->head = new_node;
+    list->head = new_node;
 
-  //list->size++;
 }
 
 void push_back(struct list_t* list, struct question_t* value) {
@@ -61,52 +61,48 @@ void push_back(struct list_t* list, struct question_t* value) {
 void swap_nodes(struct node_t* left, struct node_t* right) {
     struct node_t* next = right->next;
 
-    if(left->prev != NULL)
+    if(left->prev != NULL){
         left->prev->next = right;
+    }
 
     right->next = left;
     right->prev = left->prev;
     left->next = next;
     left->prev = right;
 
-    if(next != NULL)
+    if(next != NULL){
         next->prev = left;
+    }
 }
 
 void sort_list(struct list_t* list) {
+    int not_sorted = 1;
+    while(not_sorted) {
+        not_sorted = 0;
+        struct node_t* left = list->head;
 
-  int not_sorted = 1;
-  while(not_sorted) {
-    not_sorted = 0;
-    struct node_t* left = list->head;
+        while(left->next != NULL) {
+        struct node_t* right = left->next;
+        if(left->question->difficulty > right->question->difficulty) {
+            not_sorted = 1;
+            swap_nodes(left, right);
+            if(left == list->head)
+            list->head = right;
+            if(right == list->tail)
+            list->tail = left;
 
-    while(left->next != NULL) {
-      struct node_t* right = left->next;
-
-      if(left->question->difficulty > right->question->difficulty) {
-        not_sorted = 1;
-        swap_nodes(left, right);
-        if(left == list->head)
-          list->head = right;
-        if(right == list->tail)
-          list->tail = left;
-
-        struct node_t* tmp = left;
-        left = right;
-        right = tmp;
-      }
-
-      left = left->next;
+            struct node_t* tmp = left;
+            left = right;
+            right = tmp;
+        }
+        left = left->next;
+        }
     }
-
-  }
-
 }
 
 void fwrite_questions(struct list_t *list, char* filename)
 {
     FILE* file = fopen(filename, "ab");
-
     struct node_t* temp = list->head;
 
     while(temp != NULL)
@@ -122,7 +118,7 @@ void fwrite_questions(struct list_t *list, char* filename)
 
 }
 
-int *joker_50_50(struct question_t *question)
+int *joker_50_50(struct question_t *question) 
 {
     srand(time(0));
     int wrong_answer[2];
@@ -145,7 +141,7 @@ int *joker_50_50(struct question_t *question)
         }
     }
 
-    //alokirame pamet ot 2*int, koqto shte vurnem kato resultat ot funkciqta. V tazi pamet shte zapishem ind.
+    //alokirame pamet ot 2*int, koqto shte vurnem kato resultat ot funkciqta. V tazi pamet shte zapishem int.
     //na ostanalite dva otgovora
     int *result = malloc(2*sizeof(int));
     int i = 0;
@@ -280,15 +276,13 @@ int joker_audience(struct question_t *question)
         }
     }
     
-    
     if(question->difficulty <= 3){
         for(k=0; k<100; k++){
             if(k<80){
                 probability[k] = answer_audience[i];
             } else {
                 while ((random = rand() % 4) == i);
-                probability[k] = answer_audience[random];
-                
+                probability[k] = answer_audience[random];     
             }
         }
     }else if(question->difficulty >= 4 || question->difficulty <= 6){
@@ -369,7 +363,6 @@ void joker(struct question_t *question, int *joker_flag_50_50, int *joker_flag_f
 struct question_t* init_question(FILE *file){
     
     struct question_t* new_question = malloc(sizeof(struct question_t));
-
     char answer_letter = 'a';
 
     char *get_buffer_space;
@@ -381,7 +374,6 @@ struct question_t* init_question(FILE *file){
 
 
     for(int i = 0; i < 4; i++){
-
         printf("Enter answer %c:\n", answer_letter);
         fgets(new_question->answer[i].answer_text, 100, stdin);
         printf("Is it the right answer?(1 - true ; 0 - false)\n");
@@ -399,8 +391,6 @@ void add_question(struct list_t* list, FILE* file){
     new_question->question = init_question(file);
 
     push_back(list, new_question->question);
-
-
     sort_list(list);
     fwrite_questions(list,"out.bin");
 
@@ -632,7 +622,7 @@ void start_game(struct list_t* list, char* filename){
         }
         if(curr->question->answer[given_answer].if_right==0) {
             printf ("Sorry, you lost the game. \n");
-            break; // za da prikluchi start_game() i da se vyrne v menu()
+            break;
         }
     }
     
