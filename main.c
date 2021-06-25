@@ -286,7 +286,9 @@ int joker_audience(struct question_t *question)
             if(k<80){
                 probability[k] = answer_audience[i];
             } else {
-                while ((random = rand() % 4) == i);
+                while ((random = rand() % 3) == i){
+                    random = rand() % 3; 
+                }
                 probability[k] = answer_audience[random];
                 
             }
@@ -296,7 +298,9 @@ int joker_audience(struct question_t *question)
             if(k<60){
                 probability[k] = answer_audience[i];
             }else{
-                while ((random = rand() % 4) == i);
+                while ((random = rand() % 3) == i){
+                    random = rand() % 3;
+                }
                 probability[k] = answer_audience[random];
             }
         }
@@ -305,13 +309,15 @@ int joker_audience(struct question_t *question)
             if(k<30){
                 probability[k]=j;
             } else{
-                while ((random = rand() % 4) == i);
+                while ((random = rand() % 3) == i){
+                    random = rand() % 3;
+                }
                 probability[k] = answer_audience[random];
             }
         }
      }
 
-    random = rand() % 100;
+    random = rand() % 99;
     return probability[random];
 }
 
@@ -406,7 +412,7 @@ void add_question(struct list_t* list, FILE* file){
 
 }
 
-struct list_t *fread_questions(struct list_t* list, char* filename)
+struct list_t* fread_questions(struct list_t* list, char* filename)
 {
     srand(time(0));
     FILE* file = fopen(filename, "rb");
@@ -417,25 +423,28 @@ struct list_t *fread_questions(struct list_t* list, char* filename)
         return NULL;
     }
 
+
     fseek(file, 0L, SEEK_END);
     long sz = ftell(file);
-    fseek(file, 0L, SEEK_SET);
+    //fseek(file, 0L, SEEK_SET);
+    rewind(file);
     long count_of_questions = sz / sizeof(struct question_t);
 
     for (int i=0; i < count_of_questions; i++){
         struct question_t* new_question = malloc(sizeof(struct question_t));
         fread(new_question, sizeof(struct question_t), 1, file);
+        printf("%s", new_question->question_text);
         push_back(list, new_question);
     }
 
     sort_list(list);
+    
     struct node_t* node = list->head;
     struct list_t* random_questions = malloc(sizeof(struct list_t));
     struct node_t* curr;
     
     for (int j=1; j<=10; j++){
         int count = 0;
-        node = curr;
         while(node->question->difficulty == j){
             count++; // 4
             node = node->next;
@@ -446,12 +455,15 @@ struct list_t *fread_questions(struct list_t* list, char* filename)
 
         while(rdm!=count){
             node = node->prev;
+            count--;
         }
 
         push_back(random_questions, node->question);
+        node = curr;
     }
 
     return random_questions;
+    
 }
 
 void print_list (struct list_t* list) {
@@ -604,6 +616,7 @@ void edit_question(struct list_t* list, char* filename){
 void start_game(struct list_t* list, char* filename){
 
     struct list_t* list_of_questions;
+    //fread_questions(list, filename);
     list_of_questions = fread_questions(list, filename);
 
     int given_answer;
@@ -667,7 +680,7 @@ int main(int argc, char** argv)
 {
 
     struct list_t question_list = {};
-    FILE* file = fopen("./out.bin", "wb");
+    FILE* file = fopen("./out.bin", "rb+");
     
     menu(&question_list, file, argv[1]);
     fwrite(&question_list, sizeof(struct question_t), 0, file);
